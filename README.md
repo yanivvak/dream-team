@@ -1,5 +1,5 @@
 
-#Build your dream team with Autogen
+## Build your dream team with Autogen
    
 This repo helps you to build a team of AI agents, this code is setting up a system of agents using the autogen library. The agents include a human admin, an AI Developer, a planner, an executor, and a quality assurance agent.
 Each agent is configured with a name, a role, and specific behaviors or responsibilities.   
@@ -33,5 +33,5 @@ Guidelines for contributing to the project.
    
 ## License  
    
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.  
+This project is licensed under the MIT License.  
   
