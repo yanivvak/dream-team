@@ -46,7 +46,12 @@ pip install pyautogen
 > Check [here](https://github.com/microsoft/autogen/blob/main/OAI_CONFIG_LIST_sample)
    - Update the file with your credentials
    - Save it as OAI_CONFIG_LIST.json
-   
+## Run
+You can run the Python notebook build-dream-team.ipynb or run the app with Streamlit
+```bash
+streamlit run app.py
+```
+
 ## Contributing  
    
 Guidelines for contributing to the project.  
