@@ -39,7 +39,7 @@ deactivate
  
 ## Install dependencies
 ```bash
-pip install pyautogen
+pip install -r requirements.txt
 ```
 2. Update credentials
 
@@ -52,15 +52,6 @@ You can run the Python notebook build-dream-team.ipynb or run the app with Strea
 streamlit run app.py
 ```
 
-## Contributing  
-   
-Guidelines for contributing to the project.  
-   
-1. Fork the repository.  
-2. Create a new branch (`git checkout -b feature-branch`).  
-3. Make your changes.  
-4. Commit your changes (`git commit -m 'Add some feature'`).  
-5. Push to the branch (`git push origin feature-branch`).  
-6. Open a pull request.
+
 
   
