@@ -1,11 +1,9 @@
-import streamlit as st   # type: ignore  
+import streamlit as st    
 from autogen.agentchat import UserProxyAgent, AssistantAgent, GroupChat, GroupChatManager  
 from autogen.oai.openai_utils import config_list_from_json  
-from dotenv import load_dotenv  
 import warnings  
   
 warnings.filterwarnings('ignore')  
-load_dotenv()  
 
 # Configuration for GPT-4  
 config_list_gpt4 = config_list_from_json(  
@@ -31,7 +29,8 @@ user_proxy = UserProxyAgent(
     description="""Call this Agent if:   
         You need guidance.
         The program is not working as expected.
-        You need api key                  
+        You need api key 
+        The task is successfully completed.                 
         DO NOT CALL THIS AGENT IF:  
         You need to execute the code.""",  
 )  
@@ -97,7 +96,7 @@ quality_assurance = AssistantAgent(
       1. Double check the plan, 
       2. if there's a bug or error suggest a resolution
       3. If the task is not solved, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach.
-      4. Return 'TERMINATE' when the task successfully completed""",
+      4. Return 'terminate' when the task successfully completed""",
     llm_config=gpt4_config,
 )
 allowed_transitions = {
@@ -114,7 +113,7 @@ groupchat = GroupChat(
     agents=[user_proxy, developer, planner, executor, quality_assurance],  
     allowed_or_disallowed_speaker_transitions=allowed_transitions,  
     speaker_transitions_type="allowed",  
-    messages=[], max_round=20,  
+    messages=[], max_round=30,  
     send_introductions=True  
 )  
   
@@ -140,8 +139,8 @@ def main():
             chat_result = user_proxy.initiate_chat(manager, message=task, clear_history=False)  
   
         st.session_state.messages.append(chat_result)  
-        st.write("Chat Summary:")  
-        st.write(chat_result.summary)
+        #st.write("Chat Summary:")  
+        #st.write(chat_result.summary)
         st.write("Chat History:")  
         st.write(chat_result.chat_history)
   
