@@ -7,9 +7,9 @@ warnings.filterwarnings('ignore')
 
 # Configuration for GPT-4  
 config_list_gpt4 = config_list_from_json(  
-    "OAI_CONFIG_LIST",  
+    "OAI_CONFIG_LIST.json",  
     filter_dict={  
-        "model": ["gpt4o"],  # gpt4o or gpt4-0409  
+        "model": ["gpt-4o"],  # gpt4o or gpt4-0409  
     },  
 )  
 gpt4_config = {  
@@ -81,7 +81,7 @@ executor = UserProxyAgent(
     code_execution_config={  
         "last_n_messages": 20,  
         "work_dir": "dream",  
-        "use_docker": True,  
+        "use_docker": False,  
     },  
     description="""Call this Agent if:   
         You need to execute the code written by the developer.  
