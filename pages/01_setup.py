@@ -104,6 +104,7 @@ with st.expander("Defined agents", expanded=False):
     for val in agents:
         st.json(val)
 
+
 if (agents):
     if st.button("Save Agents", disabled=not agents):
         if len(agents):
@@ -116,6 +117,6 @@ if (agents):
                 file_name='agents.json',
                 mime='application/json'
             )
-            st.page_link("pages/run.py", label="Run")
+            st.page_link("pages/01_setup_transitions.py", label="Setup transitions", icon="🔄")
         else:
             st.session_state.info = "No agents defined yet!"
