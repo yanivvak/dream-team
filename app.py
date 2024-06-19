@@ -132,7 +132,7 @@ def stream_data(message):
 def new_print_received_message(self, message, sender):
     # st.write(f"{sender.name}: {message.get('content')}")
     print(message)
-    st.write(f"{sender.name}:")
+    st.write(f"**{sender.name}:**")
     st.write_stream(stream_data(message))
 
 
