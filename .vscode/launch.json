@@ -11,7 +11,7 @@
             "program": "./dream/bin/streamlit",
             "args": [
                 "run",
-                "test.py"
+                "app.py"
             ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}"
