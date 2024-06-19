@@ -99,7 +99,7 @@ for input_key in st.session_state.input_keys:
             )
             st.info(f"Agent {input_key} added successfully!")
 
-with st.expander("Defined agents", expanded=True):
+with st.expander("Defined agents", expanded=False):
     # st.write("Defined Agents:")
     for val in agents:
         st.json(val)
