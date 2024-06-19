@@ -81,7 +81,7 @@ executor = UserProxyAgent(
     code_execution_config={  
         "last_n_messages": 20,  
         "work_dir": "dream",  
-        "use_docker": False,  
+        "use_docker": True,  
     },  
     description="""Call this Agent if:   
         You need to execute the code written by the developer.  
