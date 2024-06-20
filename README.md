@@ -45,7 +45,7 @@ pip install -r requirements.txt
 
 > Check [here](https://github.com/microsoft/autogen/blob/main/OAI_CONFIG_LIST_sample)
    - Update the file with your credentials
-   - Save it as OAI_CONFIG_LIST.json
+   - Save it as OAI_CONFIG_LIST
 ## Run
 You can run the Python notebook build-dream-team.ipynb or run the app with Streamlit
 ```bash
