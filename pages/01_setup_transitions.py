@@ -2,6 +2,7 @@ import streamlit as st
 import random
 import string
 import json
+import time
 
 if 'input_keys' not in st.session_state:
     st.session_state.input_keys= []
@@ -21,6 +22,72 @@ if not st.session_state.info:
     info_placeholder.info("Please add new agents or load agents from JSON file.")
 else:
     info_placeholder.info(st.session_state.info)
+
+if 'nodes' not in st.session_state:
+    st.session_state['nodes'] = []
+    st.session_state['edges'] = []
+    st.session_state['flow_key'] = f'hackable_flow_{random.randint(0, 1000)}'
+
+
+def display_graph(placeholder, active_node=None):
+
+    nodes = []
+    edges = []
+    i = 0
+    # flow_key = st.session_state['flow_key']
+    with placeholder:
+        for k,v in st.session_state.saved_transitions.items():
+            color = "red" if k == active_node else "green"
+            # nodes.append(Node(id=k, size=40, color= color, title=k[0] ) )
+            # nodes.append(StreamlitFlowNode(k, (0, i), {'label': k}, 'default', 'right', 'left', style={'backgroundColor': color}))
+            if active_node is not None and k == active_node:
+                nodes.append(f"id{k}({k})")
+            for _v in v:
+                # edges.append( Edge(source=k, target=_v, type="CURVE_SMOOTH"))
+                # edges.append(StreamlitFlowEdge(f"{k}-{_v}", k, _v, animated=True))
+                edges.append(f"id{k}({k})-->id{_v}({_v})")
+            i += 1
+        # nodes.sort(key=lambda x: x.id)
+    #     streamlit_flow(flow_key, nodes, edges, layout=TreeLayout(direction='right'), fit_view=True)
+        
+    #     # Delete the old key from the state and make a new key so that streamlit is 
+    #     # forced to re-render the component with the updated node list
+    #     # if flow_key in st.session_state and flow_key:
+    #     #     del st.session_state[flow_key]
+    #     #     st.session_state['flow_key'] = f'hackable_flow_{random.randint(0, 1000)}'
+    # return nodes, edges
+
+    # construct mermaid code
+
+    code = "flowchart LR\n\n"
+    # for node in nodes:
+    #     code += f"id{node}({node})[{node}]\n"
+    for edge in edges:
+        code += f"{edge}\n\n"
+    
+    code+= f"style id{active_node} fill:#f9f,stroke:#333,stroke-width:4px\n\n"
+
+    # st.write(code)
+    mermaid(placeholder, code)
+
+import streamlit.components.v1 as components    
+def mermaid(placehoder, code: str) -> None:
+    with placehoder:
+        components.html(
+        f"""
+        <pre class="mermaid">
+            {code}
+        </pre>
+
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{ startOnLoad: true }});
+        </script>
+        """, height=600
+    )
+    return placehoder
+
+
 
 
 if (st.session_state.saved_agents):
@@ -116,3 +183,5 @@ if st.session_state.able_to_run:
         with st.expander("Defined agents transifions", expanded=False):
             st.write(st.session_state.saved_transitions)
         st.page_link("pages/02_run.py", label="Run", icon="🏃‍♂️")
+        placeholder = st.empty()
+        display_graph(placeholder, active_node="Admin")

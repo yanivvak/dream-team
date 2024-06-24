@@ -4,6 +4,68 @@ from autogen.agentchat import UserProxyAgent, AssistantAgent, GroupChat, GroupCh
 from autogen.oai.openai_utils import config_list_from_json  
 import warnings  
 
+
+import streamlit.components.v1 as components    
+def mermaid(placehoder, code: str) -> None:
+    with placehoder:
+        components.html(
+        f"""
+        <pre class="mermaid">
+            {code}
+        </pre>
+
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{ startOnLoad: true }});
+        </script>
+        """, height=400
+    )
+    return placehoder
+
+
+def display_graph(placeholder, active_node=None):
+
+    nodes = []
+    edges = []
+    i = 0
+    # flow_key = st.session_state['flow_key']
+    with placeholder:
+        for k,v in st.session_state.saved_transitions.items():
+            color = "red" if k == active_node else "green"
+            # nodes.append(Node(id=k, size=40, color= color, title=k[0] ) )
+            # nodes.append(StreamlitFlowNode(k, (0, i), {'label': k}, 'default', 'right', 'left', style={'backgroundColor': color}))
+            if active_node is not None and k == active_node:
+                nodes.append(f"id{k}({k})")
+            for _v in v:
+                # edges.append( Edge(source=k, target=_v, type="CURVE_SMOOTH"))
+                # edges.append(StreamlitFlowEdge(f"{k}-{_v}", k, _v, animated=True))
+                edges.append(f"id{k}({k})-->id{_v}({_v})")
+            i += 1
+        # nodes.sort(key=lambda x: x.id)
+    #     streamlit_flow(flow_key, nodes, edges, layout=TreeLayout(direction='right'), fit_view=True)
+        
+    #     # Delete the old key from the state and make a new key so that streamlit is 
+    #     # forced to re-render the component with the updated node list
+    #     # if flow_key in st.session_state and flow_key:
+    #     #     del st.session_state[flow_key]
+    #     #     st.session_state['flow_key'] = f'hackable_flow_{random.randint(0, 1000)}'
+    # return nodes, edges
+
+    # construct mermaid code
+
+    code = "flowchart LR\n\n"
+    # for node in nodes:
+    #     code += f"id{node}({node})[{node}]\n"
+    for edge in edges:
+        code += f"{edge}\n\n"
+    
+    code+= f"style id{active_node} fill:#f9f,stroke:#333,stroke-width:4px\n\n"
+
+    # st.write(code)
+    mermaid(placeholder, code)
+
+
+
   
 warnings.filterwarnings('ignore')  
 
@@ -11,6 +73,8 @@ warnings.filterwarnings('ignore')
 # based on https://github.com/microsoft/autogen/issues/478
 def print_messages_callback(recipient, messages, sender, config):     
     message = messages[-1]
+
+    display_graph(placeholder, active_node=message['name'])
 
     with st.expander(f"From {message['name']} to {recipient.name}", expanded=False):
         # st.write(f"From {sender} to {recipient}: ")
@@ -198,11 +262,15 @@ if (st.session_state.able_to_run):
 
     task = st.text_input("Enter your task:", "What are the 10 leading GitHub repositories on llm for the legal domain?")  
 
+    placeholder = st.empty()
+
+    display_graph(placeholder, active_node="Admin")
 
     if st.button("Run Agents", type="primary"):
         
         # TODO: add a check if agents are configured
         manager, user_proxy = config(allowed_transitions={})
+
 
         with st.spinner("Running agents..."):
             chat_result = run(manager=manager, user_proxy=user_proxy, task=task)
