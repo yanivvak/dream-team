@@ -151,14 +151,14 @@ else:
     st.warning("No agents Created yet!")
     agents = []
     st.write("First, let's create a new agents.")
-    st.page_link("pages/01_setup.py", icon="ð¤")
+    st.page_link("pages/01_setup.py", icon="🤖")
     st.session_state.able_to_run = False
 
 if (st.session_state.saved_transitions):
     st.session_state.able_to_run = True
 else:
     st.warning("No transitions defined yet!")
-    st.page_link("pages/01_setup.py", icon="ð¤")
+    st.page_link("pages/01_setup_transitions.py", label="Setup transitions", icon="🔄")
     st.session_state.able_to_run = False
 
 
