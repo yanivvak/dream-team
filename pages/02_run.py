@@ -18,7 +18,7 @@ def mermaid(placehoder, code: str) -> None:
             import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
             mermaid.initialize({{ startOnLoad: true }});
         </script>
-        """, height=400
+        """, height=250
     )
     return placehoder
 
@@ -65,7 +65,10 @@ def display_graph(placeholder, active_node=None):
     mermaid(placeholder, code)
 
 
-
+# # TODO: REMOVE THIS DEBUG STUFF
+# import json
+# st.session_state.saved_agents = json.load(open("agents.json"))
+# st.session_state.saved_transitions = json.load(open("agents_transitions.json"))
   
 warnings.filterwarnings('ignore')  
 
@@ -79,6 +82,20 @@ def print_messages_callback(recipient, messages, sender, config):
     with st.expander(f"From {message['name']} to {recipient.name}", expanded=False):
         # st.write(f"From {sender} to {recipient}: ")
         st.write(message["content"])
+
+    return False, None  # required to ensure the agent communication flow continues
+
+def display_messages_history(messages):
+    with st.container(border=True):
+        st.write("Chat History:")
+        # Output the final chat history showing the original 4 messages and resumed messages
+        for i, message in enumerate(messages):
+            try:
+                sender = message["name"]
+            except:
+                sender = "AdminX"    
+            with st.expander(f"{i+1}: From {sender}", expanded=False):
+                st.write(message["content"])
 
     return False, None  # required to ensure the agent communication flow continues
 
@@ -134,11 +151,15 @@ else:
     st.warning("No agents Created yet!")
     agents = []
     st.write("First, let's create a new agents.")
-    st.page_link("pages/01_setup.py", icon="🤖")
+    st.page_link("pages/01_setup.py", icon="ð¤")
     st.session_state.able_to_run = False
 
 if (st.session_state.saved_transitions):
     st.session_state.able_to_run = True
+else:
+    st.warning("No transitions defined yet!")
+    st.page_link("pages/01_setup.py", icon="ð¤")
+    st.session_state.able_to_run = False
 
 
 
@@ -238,9 +259,11 @@ def run(manager, user_proxy, task):
         chat_result = user_proxy.initiate_chat(manager, message=task, clear_history=True)  
         st.session_state.first_query = False  
     else:  
+        last_agent, last_message = manager.resume(messages=st.session_state.messages)
         chat_result = user_proxy.initiate_chat(manager, message=task, clear_history=False)  
 
-    st.session_state.messages.append(chat_result)  
+    st.session_state.messages = chat_result.chat_history
+      
     # st.write("Chat Summary:")  
     with st.expander("Chat Summary", expanded=True):
         st.write(chat_result.summary)
@@ -248,6 +271,7 @@ def run(manager, user_proxy, task):
         st.write(chat_result.chat_history)
 
     st.session_state.running = False
+    st.session_state.info = "Running agents done."
     return chat_result
   
     # if st.button("Clear History"):  
@@ -260,21 +284,28 @@ def run(manager, user_proxy, task):
 
 if (st.session_state.able_to_run):
 
+    # display messages if there has been history create by previous runs
+    if st.session_state.messages:
+        display_messages_history(st.session_state.messages)
+
     task = st.text_input("Enter your task:", "What are the 10 leading GitHub repositories on llm for the legal domain?")  
+    with st.container(border=True):
+        placeholder = st.empty()
+        display_graph(placeholder, active_node="Admin")
 
-    placeholder = st.empty()
+    # handling the button label based on the first query
+    if st.session_state.first_query:
+        button_label = "Run Agents"
+    else:
+        button_label = "Continue Agents' flow with new task"
 
-    display_graph(placeholder, active_node="Admin")
-
-    if st.button("Run Agents", type="primary"):
+    if st.button(button_label, type="primary"):
         
-        # TODO: add a check if agents are configured
         manager, user_proxy = config(allowed_transitions={})
-
 
         with st.spinner("Running agents..."):
             chat_result = run(manager=manager, user_proxy=user_proxy, task=task)
 
-        st.write("Done!")
-
+        st.write("Done! But you can follow-up the conversation with a new task.")
+        
 
