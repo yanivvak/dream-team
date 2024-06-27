@@ -72,6 +72,8 @@ def display_graph(placeholder, active_node=None):
   
 warnings.filterwarnings('ignore')  
 
+
+
 # Callback function to print messages
 # based on https://github.com/microsoft/autogen/issues/478
 def print_messages_callback(recipient, messages, sender, config):     
@@ -86,15 +88,17 @@ def print_messages_callback(recipient, messages, sender, config):
     return False, None  # required to ensure the agent communication flow continues
 
 def display_messages_history(messages):
-    with st.container(border=True):
-        st.write("Chat History:")
+    with st.expander(f"Chat history ({len(messages)})",expanded=False):
+        # st.write("Chat History:")
         # Output the final chat history showing the original 4 messages and resumed messages
         for i, message in enumerate(messages):
             try:
                 sender = message["name"]
             except:
                 sender = "AdminX"    
-            with st.expander(f"{i+1}: From {sender}", expanded=False):
+            # with st.expander(f"{i+1}: From {sender}", expanded=False):
+            with st.container(border=True):
+                st.caption(f"{i+1}: {sender}")
                 st.write(message["content"])
 
     return False, None  # required to ensure the agent communication flow continues
@@ -131,6 +135,15 @@ if 'messages' not in st.session_state:
 if 'first_query' not in st.session_state:  
     st.session_state.first_query = True  
 
+# handling text based on the first query
+if st.session_state.first_query:
+    button_label = "🏃‍♂️ Run Agents"
+    task_label = "Enter your task:"
+    task_example = "What are the 10 leading GitHub repositories on llm for the legal domain?"
+else:
+    button_label = "🏃‍♂️ Continue Agents' flow with the input/feedback"
+    task_label = "Enter your input/feedback to resume agentic workflow:"
+    task_example = ""
 
 # # TODO: REMOVE
 # import json
@@ -288,16 +301,11 @@ if (st.session_state.able_to_run):
     if st.session_state.messages:
         display_messages_history(st.session_state.messages)
 
-    task = st.text_input("Enter your task:", "What are the 10 leading GitHub repositories on llm for the legal domain?")  
+    task = st.text_input(task_label, task_example)  
     with st.container(border=True):
         placeholder = st.empty()
         display_graph(placeholder, active_node="Admin")
 
-    # handling the button label based on the first query
-    if st.session_state.first_query:
-        button_label = "Run Agents"
-    else:
-        button_label = "Continue Agents' flow with new task"
 
     if st.button(button_label, type="primary"):
         
@@ -306,6 +314,13 @@ if (st.session_state.able_to_run):
         with st.spinner("Running agents..."):
             chat_result = run(manager=manager, user_proxy=user_proxy, task=task)
 
-        st.write("Done! But you can follow-up the conversation with a new task.")
+        if st.button("Give another task (resume)?", type="primary"):
+            st.rerun()
+
+        if st.button("Clear History"):  
+            st.session_state.messages = []  
+            st.session_state.first_query = True  
+            st.write("Chat history cleared.")
+            st.rerun()
         
 
