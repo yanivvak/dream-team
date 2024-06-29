@@ -8,7 +8,7 @@
         "api_version": "2024-02-15-preview"
     },
     {
-        "model": "gpt4o",
+        "model": "gpt-4o",
         "api_key": "",
         "base_url": "",
         "api_type": "azure",
