@@ -3,9 +3,11 @@
    
 This repo helps you to build a team of AI agents, this code is setting up a system of agents using the autogen library. The agents include a human admin, an AI Developer, a planner, an executor, and a quality assurance agent.
 Each agent is configured with a name, a role, and specific behaviors or responsibilities.   
+
+![image](https://github.com/user-attachments/assets/4585c332-f1a1-4519-a590-6b76a7f8e72e)
+
    
-   
-## Installation  
+# Installation  
    
 ## Clone the repository     
 ```bash  
