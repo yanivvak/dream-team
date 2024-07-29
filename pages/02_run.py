@@ -2,7 +2,8 @@ import streamlit as st
 from autogen import Agent
 from autogen.agentchat import UserProxyAgent, AssistantAgent, GroupChat, GroupChatManager  
 from autogen.oai.openai_utils import config_list_from_json  
-import warnings  
+import warnings 
+from promptflow.tracing import start_trace
 
 
 import streamlit.components.v1 as components    
@@ -269,6 +270,9 @@ def run(manager, user_proxy, task):
     st.session_state.running = True
     
     if st.session_state.first_query: 
+        # start a trace session, and print a url for user to check trace
+        # traces will be collected into below collection name
+        start_trace(collection="autogen-groupchat")
         chat_result = user_proxy.initiate_chat(manager, message=task, clear_history=True)  
         st.session_state.first_query = False  
     else:  
