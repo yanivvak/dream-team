@@ -150,7 +150,9 @@ if st.session_state.able_to_run:
         with st.expander("Setup allowed transitions", expanded=True):
             # st.write("Setup allowed transitions:")
             for agent in st.session_state.saved_agents:
-                agents_transitions[agent["name"]] = st.multiselect(agent["name"], _agents_dict.keys(), _agents_dict.keys())
+                
+                _allowed_keys = [_a for _a in _agents_dict.keys() if _a != agent["name"]]
+                agents_transitions[agent["name"]] = st.multiselect(agent["name"], _allowed_keys, _allowed_keys)
 
             # st.write(agents_transitions)
 
