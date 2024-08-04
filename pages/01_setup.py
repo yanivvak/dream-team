@@ -26,25 +26,32 @@ with c1:
     if st.button("Add new agent"):
         st.session_state.input_keys.append(random.choice(string.ascii_uppercase)+str(random.randint(0,999999)))
         info_placeholder.success("New agent added successfully!")
+def load_json(filename):  
+    try:  
+        with open(filename) as f:  
+            st.session_state.saved_agents = json.load(f)  
+        st.session_state.input_keys = [agent["input_key"] for agent in st.session_state.saved_agents]  
+        st.session_state.info = "Agents loaded successfully!"  
+    except json.JSONDecodeError:  
+        st.error("Invalid JSON file!")  
+    except FileNotFoundError:  
+        st.error(f"File {filename} not found!")  
+    except Exception as e:  
+        st.error(f"An error occurred: {e}")  
+    st.rerun()  
+with c2:  
+    if st.button("Load Research Team"):  
+        load_json("research_agents.json")  
+  
+    if st.button("Load Marketing Team"):  
+        load_json("marketing_agents.json")  
+  
+    if st.button("Load Legal Team"):  
+        load_json("legal_agents.json") 
+    
+    if st.button("Load Procurement Team"):  
+        load_json("procurement_agents.json")       
 
-with c2:
-    if st.button("Load agents from JSON"):
-        # uploaded_file = st.file_uploader("Choose a file")
-        # if uploaded_file is not None:
-        #     try:
-        #         st.session_state.saved_agents = json.load(uploaded_file)
-        #     except json.JSONDecodeError:
-        #         st.error("Invalid JSON file!")
-
-        # TODO: Load agents from JSON file (uncomment above code and remove below code)
-        st.session_state.saved_agents = json.load(open("agents.json"))
-
-        # st.session_state.saved_agents = agents
-        for agent in st.session_state.saved_agents:
-            st.session_state.input_keys.append(agent["input_key"])
-        # st.session_state.input_keys = [random.choice(string.ascii_uppercase)+str(random.randint(0,999999)) for _ in range(len(agents))]
-        st.session_state.info = "Agents loaded successfully!"
-        st.rerun()
 
 with c3:
     if st.button("Clear all agents", type="primary", disabled=not st.session_state.input_keys):
