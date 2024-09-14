@@ -138,11 +138,11 @@ if 'first_query' not in st.session_state:
 
 # handling text based on the first query
 if st.session_state.first_query:
-    button_label = "🏃‍♂️ Run Agents"
+    button_label = "Run Agentic workflow"
     task_label = "Enter your task:"
     task_example = "What are the 10 leading GitHub repositories on llm for the legal domain?"
 else:
-    button_label = "🏃‍♂️ Continue Agents' flow with the input/feedback"
+    button_label = "Continue Agents' flow with the input/feedback"
     task_label = "Enter your input/feedback to resume agentic workflow:"
     task_example = ""
 
@@ -176,13 +176,25 @@ else:
     st.session_state.able_to_run = False
 
 
-
+import json
 with st.expander("Defined agents", expanded=False):
+    st.download_button(
+        label="📥 Download Agents as JSON",
+        data=json.dumps(st.session_state.saved_agents, indent=4),
+        file_name='agents.json',
+        mime='application/json'
+    )
     # st.write("Defined Agents:")
     for val in agents:
         st.json(val)
 
 with st.expander("Defined agents transifions", expanded=False):
+    st.download_button(
+            label="📥 Download Transitions as JSON",
+            data=json.dumps(st.session_state.saved_transitions, indent=4),
+            file_name='transitions.json',
+            mime='application/json'
+        )
     st.write(st.session_state.saved_transitions)
 
 # TODO: add a check if agents are configured
@@ -305,13 +317,13 @@ if (st.session_state.able_to_run):
     if st.session_state.messages:
         display_messages_history(st.session_state.messages)
 
-    task = st.text_input(task_label, task_example)  
+    task = st.text_area(task_label, value=task_example)  
     with st.container(border=True):
         placeholder = st.empty()
         display_graph(placeholder, active_node="Admin")
 
 
-    if st.button(button_label, type="primary"):
+    if st.button(button_label, type="primary", use_container_width=True):
         
         manager, user_proxy = config(allowed_transitions={})
 

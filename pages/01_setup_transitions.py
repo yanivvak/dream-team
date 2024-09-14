@@ -94,6 +94,7 @@ if (st.session_state.saved_agents):
     # st.write("Agents loaded...")
     agents = st.session_state.saved_agents
     st.session_state.able_to_run = True
+    
 else:
     st.warning("No agents Created yet!")
     agents = []
@@ -107,14 +108,14 @@ if st.session_state.able_to_run:
 
     c1, c2, c3 = st.columns([1, 1, 1])
 
-    with c1:
+    with c2:
         # if st.button("Add new agent"):
         #     st.session_state.input_keys.append(random.choice(string.ascii_uppercase)+str(random.randint(0,999999)))
         #     info_placeholder.success("New agent added successfully!")
         pass
 
-    with c2:
-        if st.button("Load agents transitions from JSON"):
+    with c1:
+        if st.button("⏏️ Load transitions"):
             # uploaded_file = st.file_uploader("Choose a file")
             # if uploaded_file is not None:
             #     try:
@@ -133,11 +134,6 @@ if st.session_state.able_to_run:
             st.rerun()
 
     with c3:
-        # if st.button("Clear all agents", type="primary", disabled=not st.session_state.input_keys):
-        #     st.session_state.input_keys = []
-        #     st.session_state.saved_agents = []
-        #     st.session_state.info = "All agents cleared successfully!"
-        #     st.rerun()
         pass
 
 
@@ -184,6 +180,11 @@ if st.session_state.able_to_run:
         # agents_transitions = st.session_state.saved_transitions
         with st.expander("Defined agents transifions", expanded=False):
             st.write(st.session_state.saved_transitions)
-        st.page_link("pages/02_run.py", label="Run", icon="🏃‍♂️")
+        # st.page_link("pages/02_run.py", label="Run", icon="🏃‍♂️")
+
+
         placeholder = st.empty()
-        display_graph(placeholder, active_node="Admin")
+        # display_graph(placeholder, active_node="Admin")
+
+        if st.button("Use these & Continue", type="primary"):
+            st.switch_page("pages/02_run.py")
