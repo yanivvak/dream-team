@@ -1,4 +1,4 @@
-autogen>=0.30.0
+autogen>=0.3.0
 openai>=1.11.1
 streamlit>=1.32.0
 promptflow-tracing
