@@ -79,9 +79,14 @@ else:
     # st.write("No agents loaded yet!")
     agents = []
 
+
+def generate_random_agent_emoji() -> str:
+    emoji_list = ["🤖", "🔄", "😊", "🚀", "🌟", "🔥", "💡", "🎉", "👍", "💻"]
+    return random.choice(emoji_list)
+
 # TODO: when loading agent from JSON, cannot add new agent (filled details are not propagated to the object, keeps being NULL)
 for input_key in st.session_state.input_keys:
-    with st.expander(f"Agent {input_key}", expanded=True):
+    with st.expander(f"{generate_random_agent_emoji()} Agent {input_key}", expanded=False):
         agent = get_agent(input_key)
         # st.write(agent)
         # st.caption(f"Agent {len(agents)+1}")
@@ -106,24 +111,28 @@ for input_key in st.session_state.input_keys:
             )
             st.info(f"Agent {input_key} added successfully!")
 
-with st.expander("Defined agents", expanded=False):
-    # st.write("Defined Agents:")
-    for val in agents:
-        st.json(val)
+
+## Debugging
+# with st.expander("Defined agents", expanded=False):
+#     # st.write("Defined Agents:")
+#     for val in agents:
+#         st.json(val)
 
 
 if (agents):
-    if st.button("Save Agents", disabled=not agents):
+    if st.button("Use these agents & Continue", disabled=(not agents), type="primary"):
         if len(agents):
             st.session_state.saved_agents = agents
             st.session_state.info = "Agents saved successfully!"
             # Optionally, provide a download link for the JSON file
-            st.download_button(
-                label="Download Agents as JSON",
-                data=json.dumps(st.session_state.saved_agents, indent=4),
-                file_name='agents.json',
-                mime='application/json'
-            )
-            st.page_link("pages/01_setup_transitions.py", label="Setup transitions", icon="🔄")
+            # st.download_button(
+            #     label="Download Agents as JSON",
+            #     data=json.dumps(st.session_state.saved_agents, indent=4),
+            #     file_name='agents.json',
+            #     mime='application/json'
+            # )
+            # st.write ("To continue, setup transitions between agents:")
+            # st.page_link("pages/01_setup_transitions.py", label="Setup transitions", icon="🔄", use_container_width=True)
+            st.switch_page("pages/01_setup_transitions.py")
         else:
             st.session_state.info = "No agents defined yet!"
