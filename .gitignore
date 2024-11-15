@@ -1,6 +1,10 @@
 OAI_CONFIG_LIST.json
 .env
 
+__pycache__/
 dream/
+dream-agnext/
 
 .cache/
+
+data/
