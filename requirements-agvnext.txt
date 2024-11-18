@@ -1,13 +1,5 @@
 azure-identity
 python-dotenv
-autogen-agentchat==0.4.0.dev4
-autogen-ext[docker]==0.4.0.dev4
-# git clone https://github.com/microsoft/autogen.git 
-# cd autogen/python/packages/autogen-magentic-one
-# pip install -e .
-
-# playwright install --with-deps chromium
-
-# autogen-ext==0.4.0.dev6 
-# docker
+autogen-agentchat==0.4.0.dev6
+autogen-ext[docker]==0.4.0.dev6
 streamlit

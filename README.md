@@ -6,6 +6,7 @@ Each agent is configured with a name, a role, and specific behaviors or responsi
 
 ![image](https://github.com/user-attachments/assets/4585c332-f1a1-4519-a590-6b76a7f8e72e)
 
+:tada: November 18, 2024: we are porting this repo to  [Autogen 0.4](https://microsoft.github.io/autogen/0.4.0.dev6/index.html), A new event driven, asynchronous architecture for AutoGen and [Magentic One](https://github.com/microsoft/autogen/tree/main/python/packages/autogen-magentic-one)
    
 # Installation  
    
@@ -18,7 +19,7 @@ git clone https://github.com/yanivvak/dream-team.git
 cd dream-team  
 ```
 
-1. Set up a virtual environment (Preferred)
+Set up a virtual environment (Preferred)
 ```bash
 python -m venv dream
 ```
@@ -41,19 +42,29 @@ deactivate
  
 ## Install dependencies
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-agvnext.txt
 ```
-2. Update credentials
-
-> Check [here](https://github.com/microsoft/autogen/blob/main/OAI_CONFIG_LIST_sample)
-   - Update the file with your credentials
-   - Save it as OAI_CONFIG_LIST
-## Run
-You can run the Python notebook build-dream-team.ipynb or run the app with Streamlit
 ```bash
-streamlit run app.py
+git clone https://github.com/microsoft/autogen.git 
+cd autogen/python/packages/autogen-magentic-one
+pip install -e .
+```
+```bash
+playwright install --with-deps chromium
 ```
 
+## Update credentials
+
+   - Update .env.sample with your credentials
+   - Save it as .env
+> Magentic-One code uses code execution, you need to have Docker installed to run any examples
+
+# Run
+Switch to dream team folder(cd ..)
+```bash
+streamlit run app-agnext.py
+```
+/make sure you are updating your qouta if needed
 
 
   
