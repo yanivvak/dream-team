@@ -1,4 +1,5 @@
-
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/yaniv-vaknin-7a8324178/)
 # Build your dream team with Autogen
    
 This repo helps you to build a team of AI agents, this code is setting up a system of agents using the autogen library. The agents include a human admin, an AI Developer, a planner, an executor, and a quality assurance agent.
@@ -64,7 +65,5 @@ Switch to dream team folder(cd ..)
 ```bash
 streamlit run app-agnext.py
 ```
-/make sure you are updating your qouta if needed
-
 
   
