@@ -61,9 +61,8 @@ playwright install --with-deps chromium
 > Magentic-One code uses code execution, you need to have Docker installed to run any examples
 
 # Run
-Switch to dream team folder(cd ..)
 ```bash
-streamlit run app.py
+streamlit run src/app.py
 ```
 
   
