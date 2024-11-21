@@ -1,17 +1,17 @@
+import asyncio
+import sys
+if sys.platform.startswith("win"):
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
 import streamlit as st
-
-
 import asyncio
 import logging
 import os
 import json
 from datetime import datetime
- 
+from magentic_one_helper import MagenticOneHelper
 from dotenv import load_dotenv
 load_dotenv()
-from magentic_one_helper import MagenticOneHelper
-
-
 
 # Initialize session state for instructions
 if 'instructions' not in st.session_state:
@@ -26,7 +26,7 @@ if "final_answer" not in st.session_state:
 st.title("MagenticOne Workflow Runner")
 st.caption("This app runs a MagenticOne workflow based on the instructions provided.")
 # Input for instructions
-instructions = st.text_input("Enter your instructions:", value="generate code for 'Hello World' in Python")
+instructions = st.text_input("Enter your instructions:", value="generate code to calculate 34*87 in Python and calculate the result")
 run_button = st.button("Run Agents", type="primary")
 
 def display_log_message(log_entry):     
@@ -38,8 +38,9 @@ def display_log_message(log_entry):
     _timestamp = datetime.fromisoformat(_timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
     if _type == "OrchestrationEvent":
-        with st.expander(f"From {_log_entry_json['source']} @ {_timestamp}", expanded=False):
-            st.write(_log_entry_json["message"])
+        st.markdown(f"**From {_log_entry_json['source']} @ {_timestamp}:**")
+        st.write(_log_entry_json["message"])
+        st.write("---")
     elif _type == "LLMCallEvent":
         st.caption(f'{_timestamp} LLM Call [prompt_tokens: {_log_entry_json["prompt_tokens"]}, completion_tokens: {_log_entry_json["completion_tokens"]}]')
     else:
@@ -64,8 +65,6 @@ async def main(task, logs_dir="./logs"):
     with st.container(border=True):    
         # Stream and process logs
         async for log_entry in magnetic_one.stream_logs():
-            # print(json.dumps(log_entry, indent=2))
-            # st.write(json.dumps(log_entry, indent=2))
             display_log_message(log_entry=log_entry)
 
     # Wait for task to complete
@@ -88,7 +87,7 @@ if run_button and instructions:
     st.write("Instructions:", st.session_state['instructions'])
 
     with st.spinner("Running the workflow..."):
-        # asyncio.run(main("generate code for 'Hello World' in Python"))
+        # asyncio.run(main("generate code and calculate with python 132*82"))
         asyncio.run(main(st.session_state['instructions']))
 
     final_answer = st.session_state["final_answer"]
@@ -99,5 +98,3 @@ if run_button and instructions:
     else:
         st.error("Task failed.")
         st.write("Final answer not found.")
-
-        

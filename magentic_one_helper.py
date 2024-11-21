@@ -11,23 +11,41 @@ from autogen_core.application.logging import EVENT_LOGGER_NAME
 from autogen_core.base import AgentId, AgentProxy
 from autogen_core.components import DefaultTopicId
 from autogen_core.components.code_executor import LocalCommandLineCodeExecutor
-from autogen_ext.code_executor.docker_executor import DockerCommandLineCodeExecutor
+from autogen_ext.code_executors import DockerCommandLineCodeExecutor
+from autogen_ext.code_executors import ACADynamicSessionsCodeExecutor
 from autogen_core.components.code_executor import CodeBlock
 from autogen_magentic_one.agents.coder import Coder, Executor
 from autogen_magentic_one.agents.file_surfer import FileSurfer
 from autogen_magentic_one.agents.multimodal_web_surfer import MultimodalWebSurfer
 from autogen_magentic_one.agents.orchestrator import LedgerOrchestrator
-from autogen_magentic_one.agents.user_proxy import UserProxy
 from autogen_magentic_one.messages import BroadcastMessage
-from autogen_magentic_one.utils import LogHandler, create_completion_client_from_env
+from autogen_magentic_one.utils import LogHandler
 from autogen_core.components.models import UserMessage
 from threading import Lock
-
+from azure.identity import DefaultAzureCredential
+import tempfile
 ## MMA
 from autogen_ext.models import AzureOpenAIChatCompletionClient
 from dotenv import load_dotenv
 load_dotenv()
 ## end MMA
+
+# Create client
+client = AzureOpenAIChatCompletionClient(
+    model="gpt-4o",
+    api_version="2024-02-01",
+    azure_endpoint=os.getenv("AZURE_ENDPOINT"),
+    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+    #azure_ad_token_provider=token_provider,
+    model_capabilities={
+        "vision":True,
+        "function_calling":True,
+        "json_output":True,
+    }
+)
+pool_endpoint=os.getenv("POOL_MANAGEMENT_ENDPOINT")
+azure_credential = DefaultAzureCredential()
+
 async def confirm_code(code: CodeBlock) -> bool:
     return True
 
@@ -63,27 +81,19 @@ class MagenticOneHelper:
         self.log_handler = LogHandler(filename=os.path.join(self.logs_dir, "log.jsonl"))
         logger.handlers = [self.log_handler]
 
-        # Create client
-        # client = create_completion_client_from_env(model="gpt-4o")
-        client = AzureOpenAIChatCompletionClient(
-            model="gpt-4o",
-            api_version="2024-02-01",
-            azure_endpoint=os.getenv("AZURE_ENDPOINT"),
-            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-            #azure_ad_token_provider=token_provider,
-            model_capabilities={
-                "vision":True,
-                "function_calling":True,
-                "json_output":True,
-            }
-        )
-
         # Set up code executor
         self.code_executor = DockerCommandLineCodeExecutor(work_dir=self.logs_dir)
         await self.code_executor.__aenter__()
+        
+        '''use this code if you want to use azure container code executor
+        with tempfile.TemporaryDirectory() as temp_dir:
+            self.code_executor = ACADynamicSessionsCodeExecutor(
+                pool_management_endpoint=pool_endpoint, credential=azure_credential, work_dir=temp_dir
+            )
+        '''
 
+        # Register agents.
         await Coder.register(self.runtime, "Coder", lambda: Coder(model_client=client))
-
         coder = AgentProxy(AgentId("Coder", "default"), self.runtime)
 
         await Executor.register(
@@ -93,7 +103,6 @@ class MagenticOneHelper:
         )
         executor = AgentProxy(AgentId("Executor", "default"), self.runtime)
 
-        # Register agents.
         await MultimodalWebSurfer.register(self.runtime, "WebSurfer", MultimodalWebSurfer)
         web_surfer = AgentProxy(AgentId("WebSurfer", "default"), self.runtime)
 

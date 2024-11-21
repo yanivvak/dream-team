@@ -43,7 +43,7 @@ deactivate
  
 ## Install dependencies
 ```bash
-pip install -r requirements-agvnext.txt
+pip install -r requirements.txt
 ```
 ```bash
 git clone https://github.com/microsoft/autogen.git 
@@ -63,7 +63,7 @@ playwright install --with-deps chromium
 # Run
 Switch to dream team folder(cd ..)
 ```bash
-streamlit run app-agnext.py
+streamlit run app.py
 ```
 
   
