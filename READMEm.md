@@ -38,7 +38,7 @@ To deactivate :
 ```bash
 deactivate
 ```
-> More information about virtual environments can be found [here] (https://docs.python.org/3/tutorial/venv.html)
+> More information about virtual environments can be found [here](https://docs.python.org/3/tutorial/venv.html)
 
  
 ## Install dependencies
@@ -56,7 +56,7 @@ playwright install --with-deps chromium
 
 ## Update credentials
 
-   - Update .env.sample with your credentials
+   - Update .env.sample (under src) with your credentials
    - Save it as .env
 > Magentic-One code uses code execution, you need to have Docker installed to run any examples
 
