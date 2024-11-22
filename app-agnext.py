@@ -24,9 +24,9 @@ if "final_answer" not in st.session_state:
     st.session_state["final_answer"] = None
 
 st.title("MagenticOne Workflow Runner")
-st.caption("This app runs a MagenticOne workflow based on the instructions provided.")
+st.caption("This app runs a MagenticOne workflow in Docker based on the instructions provided.")
 # Input for instructions
-instructions = st.text_input("Enter your instructions:", value="generate code for 'Hello World' in Python")
+instructions = st.text_area("Enter your instructions:", value="generate code for 'Hello World' in Python", height=100)
 run_button = st.button("Run Agents", type="primary")
 
 def display_log_message(log_entry):     
@@ -36,14 +36,30 @@ def display_log_message(log_entry):
     _type = _log_entry_json.get("type", None)
     _timestamp = _log_entry_json.get("timestamp", None)
     _timestamp = datetime.fromisoformat(_timestamp).strftime('%Y-%m-%d %H:%M:%S')
+    # _src = _log_entry_json["source"]
+    agent_icon = "🚫"
 
-    if _type == "OrchestrationEvent":
-        with st.expander(f"From {_log_entry_json['source']} @ {_timestamp}", expanded=False):
+    if _type == "OrchestrationEvent" or _type == "WebSurferEvent":
+        if str(_log_entry_json["source"]).startswith("Orchestrator"):
+            agent_icon = "🎻"
+        elif _log_entry_json["source"] == "WebSurfer":
+            agent_icon = "🏄‍♂️"
+        elif _log_entry_json["source"] == "Coder":
+            agent_icon = "👨‍💻"
+        elif _log_entry_json["source"] == "FileSurfer":
+            agent_icon = "📂"
+        elif _log_entry_json["source"] == "Executor":
+            agent_icon = "💻"
+        elif _log_entry_json["source"] == "UserProxy":
+            agent_icon = "👤"
+        else:
+            agent_icon = "🤖"
+        with st.expander(f"{agent_icon} {_log_entry_json['source']} @ {_timestamp}", expanded=False):
             st.write(_log_entry_json["message"])
     elif _type == "LLMCallEvent":
         st.caption(f'{_timestamp} LLM Call [prompt_tokens: {_log_entry_json["prompt_tokens"]}, completion_tokens: {_log_entry_json["completion_tokens"]}]')
     else:
-        st.caption("Invalid log entry format.")
+        st.caption("🤔 Agents mumbling...")
 
 
 async def main(task, logs_dir="./logs"):
@@ -85,7 +101,7 @@ async def main(task, logs_dir="./logs"):
 if run_button and instructions:
     st.session_state['instructions'] = instructions
     st.session_state['running'] = True
-    st.write("Instructions:", st.session_state['instructions'])
+    # st.write("Instructions:", st.session_state['instructions'])
 
     with st.spinner("Running the workflow..."):
         # asyncio.run(main("generate code for 'Hello World' in Python"))
