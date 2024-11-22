@@ -11,7 +11,7 @@
             "program": "./dream/bin/streamlit",
             "args": [
                 "run",
-                "app.py"
+                "app-agnext.py"
             ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}"
