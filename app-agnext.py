@@ -11,7 +11,8 @@ from dotenv import load_dotenv
 load_dotenv()
 from magentic_one_helper import MagenticOneHelper
 
-
+# Initialize a global cancellation event
+cancel_event = asyncio.Event()
 
 # Initialize session state for instructions
 if 'instructions' not in st.session_state:
@@ -25,9 +26,56 @@ if "final_answer" not in st.session_state:
 
 st.title("MagenticOne Workflow Runner")
 st.caption("This app runs a MagenticOne workflow in Docker based on the instructions provided.")
-# Input for instructions
-instructions = st.text_area("Enter your instructions:", value="generate code for 'Hello World' in Python", height=100)
-run_button = st.button("Run Agents", type="primary")
+
+run_button_text = "Run Agents"
+if not st.session_state['running']:
+      
+    st.write("Our AI agents are ready to assist you. Our line up:")
+    c1, c2, c3, c4, c5 = st.columns([1, 1, 1, 1, 1])
+
+    with c1:
+        with st.container(border=True):
+            st.write("🎻") 
+            st.caption("Orchestrator")
+    with c2:
+        with st.container(border=True):
+            st.write("🏄‍♂️")
+            st.caption("WebSurfer")
+    with c3:
+        with st.container(border=True):
+            st.write("👨‍💻")
+            st.caption("Coder")
+    with c4:
+        with st.container(border=True):
+            st.write("📂")
+            st.caption("FileSurfer")
+    with c5:
+        with st.container(border=True):
+            st.write("💻")
+            st.caption("Executor")
+
+        
+
+    # Input for instructions
+    instructions = st.text_area("Enter your instructions:", value="generate code for 'Hello World' in Python", height=100)
+else:
+    run_button_text = "Cancel Run"
+
+
+
+if st.button(run_button_text, type="primary"):
+    if not st.session_state['running']:
+        st.session_state['instructions'] = instructions
+        st.session_state['running'] = True
+        st.session_state['final_answer'] = None
+        cancel_event.clear()  # Clear the cancellation event
+        st.rerun()
+    else:
+        st.session_state['running'] = False
+        st.session_state['instructions'] = ""
+        st.session_state['final_answer'] = None
+        cancel_event.set()  # Set the cancellation event
+        st.rerun()
 
 def display_log_message(log_entry):     
     # _log_entry_json  = json.loads(log_entry)
@@ -98,10 +146,8 @@ async def main(task, logs_dir="./logs"):
         st.session_state["final_answer"] = None
         st.warning("No final answer found in logs.")
 
-if run_button and instructions:
-    st.session_state['instructions'] = instructions
-    st.session_state['running'] = True
-    # st.write("Instructions:", st.session_state['instructions'])
+if st.session_state['running']:
+    assert st.session_state['instructions'] != "", "Instructions cannot be empty."
 
     with st.spinner("Running the workflow..."):
         # asyncio.run(main("generate code for 'Hello World' in Python"))
