@@ -5,3 +5,4 @@ __pycache__/
 dream/
 .cache/
 logs/
+autogen/dotnet
