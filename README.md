@@ -17,7 +17,7 @@ git clone https://github.com/yanivvak/dream-team.git
 ```
 ## Navigate to the project directory  
 ```bash  
-cd dream-team  
+cd src 
 ```
 
 Set up a virtual environment (Preferred)
@@ -62,7 +62,7 @@ playwright install --with-deps chromium
 
 # Run
 ```bash
-streamlit run src/app.py
+streamlit run app.py
 ```
 
   
