@@ -5,3 +5,7 @@ __pycache__/
 dream/
 .cache/
 logs/
+dream-agnext/
+data/
+
+OAI_CONFIG_LIST.json

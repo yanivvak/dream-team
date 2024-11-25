@@ -1,5 +1,4 @@
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/yaniv-vaknin-7a8324178/)
+
 # Build your dream team with Autogen
    
 This repo helps you to build a team of AI agents, this code is setting up a system of agents using the autogen library. The agents include a human admin, an AI Developer, a planner, an executor, and a quality assurance agent.
@@ -17,7 +16,7 @@ git clone https://github.com/yanivvak/dream-team.git
 ```
 ## Navigate to the project directory  
 ```bash  
-cd src 
+cd dream-team  
 ```
 
 Set up a virtual environment (Preferred)
@@ -38,12 +37,12 @@ To deactivate :
 ```bash
 deactivate
 ```
-> More information about virtual environments can be found [here](https://docs.python.org/3/tutorial/venv.html)
+> More information about virtual environments can be found [here] (https://docs.python.org/3/tutorial/venv.html)
 
  
 ## Install dependencies
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-agvnext.txt
 ```
 ```bash
 git clone https://github.com/microsoft/autogen.git 
@@ -56,13 +55,16 @@ playwright install --with-deps chromium
 
 ## Update credentials
 
-   - Update .env.sample (under src) with your credentials
+   - Update .env.sample with your credentials
    - Save it as .env
 > Magentic-One code uses code execution, you need to have Docker installed to run any examples
 
 # Run
+Switch to dream team folder(cd ..)
 ```bash
-streamlit run app.py
+streamlit run app-agnext.py
 ```
+/make sure you are updating your qouta if needed
+
 
   
