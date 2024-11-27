@@ -1,5 +1,5 @@
 
-FROM python:3.10-slim-bullseye
+FROM python:3.12-slim-bullseye
 
 # Set working directory
 WORKDIR /app
@@ -39,3 +39,5 @@ EXPOSE 80
 
 # Run the Streamlit application
 CMD ["streamlit", "run", "app.py", "--server.port=80"]
+
+

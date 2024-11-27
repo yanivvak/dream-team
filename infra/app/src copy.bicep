@@ -163,7 +163,9 @@ resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2023
 resource dynamicsession 'Microsoft.App/sessionPools@2024-02-02-preview' = {
   name: 'sessionPool'
   location: location
-  
+  identity: {
+    type: 'SystemAssigned'
+  }
   
   tags: {
     tagName1: 'tagValue1'
@@ -185,6 +187,25 @@ resource dynamicsession 'Microsoft.App/sessionPools@2024-02-02-preview' = {
   }
 }
 
+// Retrieve the principalId from the session pool's identity
+var principalId = dynamicsession.identity.principalId
+var roleDefinitionId = subscriptionResourceId(
+  'Microsoft.Authorization/roleDefinitions',
+  'e3c2381c-8599-4784-ad2e-d33d8b6b983e' )
+
+// Generate a unique name for the role assignment
+var roleAssignmentName = guid(dynamicsession.id, principalId, roleDefinitionId)
+
+// Create the role assignment resource
+resource sessionExecutorRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: roleAssignmentName
+  scope: dynamicsession.resource.id
+  properties: {
+    roleDefinitionId: roleDefinitionId
+    principalId: principalId
+    principalType: 'ServicePrincipal'  // Managed identities are of type 'ServicePrincipal'
+  }
+}
 
 output defaultDomain string = containerAppsEnvironment.properties.defaultDomain
 output name string = app.name
