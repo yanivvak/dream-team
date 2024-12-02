@@ -118,6 +118,8 @@ module src './app/src.bicep' = {
     containerRegistryName: registry.outputs.name
     exists: srcExists
     appDefinition: srcDefinition
+    userPrincipalId: principalId
+    customSubDomainName: 'dream-${resourceToken}'
   }
   scope: rg
 }

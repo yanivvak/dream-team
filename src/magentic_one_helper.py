@@ -19,7 +19,7 @@ from autogen_magentic_one.messages import BroadcastMessage
 from autogen_magentic_one.utils import LogHandler
 from autogen_core.components.models import UserMessage
 from threading import Lock
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 import tempfile
 from promptflow.tracing import start_trace
 
@@ -32,14 +32,17 @@ from dotenv import load_dotenv
 load_dotenv()
 ## end MMA
 azure_credential = DefaultAzureCredential()
+
+token_provider = get_bearer_token_provider(
+    azure_credential, "https://cognitiveservices.azure.com/.default"
+)
+
 # Create client
 client = AzureOpenAIChatCompletionClient(
     model="gpt-4o-mini",
     api_version="2024-02-01",
     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-    #api_key=azure_credential,
-    #azure_ad_token_provider=token_provider,
+    azure_ad_token_provider=token_provider,
     model_capabilities={
         "vision":True,
         "function_calling":True,
