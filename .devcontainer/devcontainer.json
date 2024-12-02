@@ -33,5 +33,5 @@
   },
   // Add your own post creation commands here
   // Add the Python packages that you use to requirements.txt
-  "postCreateCommand": "sudo apt update && pip install --upgrade pip && pip install -r src/requirements.txt && playwright install --with-deps chromium"
+  "postCreateCommand": ".devcontainer/post-create.sh"
 }
