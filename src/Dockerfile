@@ -18,8 +18,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get clean
-
 RUN pip install --no-cache-dir --upgrade pip
 
 RUN pip install --no-cache-dir playwright
@@ -27,6 +25,8 @@ RUN playwright install --with-deps chromium
 
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
+
+RUN apt-get clean
 
 # Clone the autogen repository and install the package
 RUN git clone --depth 1 https://github.com/microsoft/autogen.git
