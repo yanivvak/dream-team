@@ -4,10 +4,8 @@ FROM python:3.12-slim-bullseye
 # Set working directory
 WORKDIR /app
 
-COPY . /app
-
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     gnupg \
@@ -18,21 +16,25 @@ RUN apt-get update && apt-get install -y \
 # Install dependencies  
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/*  
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip install playwright
+RUN apt-get clean
+
+
+RUN pip install --upgrade pip
+
+RUN pip install --no-cache-dir playwright
 RUN playwright install --with-deps chromium
 
-# Install Python dependencies
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Clone the autogen repository and install the package
-RUN git clone https://github.com/microsoft/autogen.git
+RUN git clone --depth 1 https://github.com/microsoft/autogen.git
 WORKDIR /app/autogen/python/packages/autogen-magentic-one
 RUN pip install -e .
 
-WORKDIR /app
+COPY . .
 
 # Expose the Streamlit port
 EXPOSE 80
