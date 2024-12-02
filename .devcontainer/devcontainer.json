@@ -5,6 +5,7 @@
     "ghcr.io/devcontainers/features/azure-cli:1": {},
     "ghcr.io/azure/azure-dev/azd:0": {},
     "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
   "customizations": {
@@ -32,5 +33,5 @@
   },
   // Add your own post creation commands here
   // Add the Python packages that you use to requirements.txt
-  "postCreateCommand": "sudo apt update && pip install --upgrade pip && pip install -r src/requirements.txt"
+  "postCreateCommand": "sudo apt update && pip install --upgrade pip && pip install -r src/requirements.txt && playwright install --with-deps chromium"
 }
