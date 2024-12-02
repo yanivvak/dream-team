@@ -9,12 +9,19 @@ Each agent is configured with a name, a role, and specific behaviors or responsi
 
 :tada: November 18, 2024: we are porting this repo to  [Autogen 0.4](https://microsoft.github.io/autogen/0.4.0.dev6/index.html), A new event driven, asynchronous architecture for AutoGen and [Magentic One](https://github.com/microsoft/autogen/tree/main/python/packages/autogen-magentic-one)
    
-# Installation  
+# Installation
    
 ## Clone the repository     
 ```bash  
 git clone https://github.com/yanivvak/dream-team.git  
 ```
+
+## Deploy Azure Resources and the app
+
+```bash
+azd up
+```
+
 ## Navigate to the project directory  
 ```bash  
 cd src 
@@ -50,15 +57,17 @@ git clone --depth 1 https://github.com/microsoft/autogen.git
 cd autogen/python/packages/autogen-magentic-one
 pip install -e .
 ```
+
 ```bash
 playwright install --with-deps chromium
 ```
 
-## Update credentials
+## Update configuration
 
-   - Update .env.sample (under src) with your credentials
-   - Save it as .env
-> Magentic-One code uses code execution, you need to have Docker installed to run any examples
+   - If you used AZD to deploy the resources just run `azd env get-values > .env` in the `src` directory
+   - Alternatively, copy `.env.sample` (under src) into `.env`
+
+> Magentic-One code uses code execution, you need to have Docker installed to run the examples if you use local execution
 
 # Run
 ```bash
