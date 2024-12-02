@@ -20,8 +20,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 
 RUN apt-get clean
 
-
-RUN pip install --upgrade pip
+RUN pip install --no-cache-dir --upgrade pip
 
 RUN pip install --no-cache-dir playwright
 RUN playwright install --with-deps chromium
@@ -34,12 +33,10 @@ RUN git clone --depth 1 https://github.com/microsoft/autogen.git
 WORKDIR /app/autogen/python/packages/autogen-magentic-one
 RUN pip install -e .
 
-COPY . .
+COPY . . 
 
 # Expose the Streamlit port
 EXPOSE 80
 
 # Run the Streamlit application
 CMD ["streamlit", "run", "app.py", "--server.port=80"]
-
-
