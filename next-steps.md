@@ -1,4 +1,3 @@
-# Next Steps after `azd init`
 
 ## Table of Contents
 

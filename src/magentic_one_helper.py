@@ -39,7 +39,7 @@ token_provider = get_bearer_token_provider(
 
 # Create client
 client = AzureOpenAIChatCompletionClient(
-    model="gpt-4o-mini",
+    model="gpt-4o",
     api_version="2024-02-01",
     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
     azure_ad_token_provider=token_provider,

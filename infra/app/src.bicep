@@ -143,7 +143,7 @@ resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
 param azureOpenaiResourceName string = 'dream' 
 
 // Define the name of the Azure OpenAI model name  
-param azureOpenaiDeploymentName string = 'gpt-4o-mini' 
+param azureOpenaiDeploymentName string = 'gpt-4o' 
 
 //Define the OpenAI resource
 resource openai 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
@@ -168,7 +168,7 @@ resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2023
   }
   properties: {
     model: {
-      name: 'gpt-4o-mini'
+      name: 'gpt-4o'
       format: 'OpenAI'
       version: '2024-07-18'
       
@@ -244,7 +244,5 @@ output defaultDomain string = containerAppsEnvironment.properties.defaultDomain
 output name string = app.name
 output uri string = 'https://${app.properties.configuration.ingress.fqdn}'
 output id string = app.id
-//output azureEndpoint string = '${openai.properties.endpoint}openai/deployments/gpt-4o/chat/completions?api-version=2024-02-15-preview'
-//output pool_endpoint string = 'https://${location}.dynamicsessions.io/${subscription().id}${resourceGroup().id}/sessionPools/${symbolicname.name}'
 output azure_endpoint string = openai.properties.endpoint
 output pool_endpoint string = dynamicsession.properties.poolManagementEndpoint
