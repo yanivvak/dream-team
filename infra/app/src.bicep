@@ -170,7 +170,7 @@ resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2023
     model: {
       name: 'gpt-4o'
       format: 'OpenAI'
-      version: '2024-07-18'
+      version: '2024-08-06'
       
     }
     raiPolicyName: 'Microsoft.Default'

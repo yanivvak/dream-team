@@ -79,7 +79,9 @@ playwright install --with-deps chromium
    - Alternatively, copy `.env.sample` (under src) into `.env`
 
 > Magentic-One code uses code execution, you need to have Docker installed to run the examples if you use local execution
-
+```bash
+cd ../../../..
+```
 # Run
 ```bash
 streamlit run app.py
