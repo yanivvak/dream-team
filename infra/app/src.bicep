@@ -216,6 +216,7 @@ resource appSessionPoolRoleAssignment 'Microsoft.Authorization/roleAssignments@2
   scope: dynamicsession
   properties: {
     principalId: identity.properties.principalId
+    principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0fb8eba5-a2bb-4abe-b1c1-49dfad359bb0')
   }
 }
@@ -234,6 +235,7 @@ resource appOpenaiRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-0
   scope: openai
   properties: {
     principalId: identity.properties.principalId
+    principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
   }
 }
