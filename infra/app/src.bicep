@@ -7,8 +7,15 @@ param containerRegistryName string
 param containerAppsEnvironmentName string
 param applicationInsightsName string
 param exists bool
+
+@description('Custom subdomain name for the OpenAI resource (must be unique in the region)')
+param customSubDomainName string
+
 @secure()
 param appDefinition object
+
+@description('Principal ID of the user executing the deployment')
+param userPrincipalId string
 
 var appSettingsArray = filter(array(appDefinition.settings), i => i.name != '')
 var secrets = map(filter(appSettingsArray, i => i.?secret != null), i => {
@@ -98,6 +105,18 @@ resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
               value: applicationInsights.properties.ConnectionString
             }
             {
+              name: 'AZURE_OPENAI_ENDPOINT'
+              value: openai.properties.endpoint
+            }
+            {
+              name: 'POOL_MANAGEMENT_ENDPOINT'
+              value: dynamicsession.properties.poolManagementEndpoint
+            }
+            {
+              name: 'AZURE_CLIENT_ID'
+              value: identity.properties.clientId
+            }
+            {
               name: 'PORT'
               value: '80'
             }
@@ -130,24 +149,23 @@ param azureOpenaiDeploymentName string = 'gpt-4o-mini'
 resource openai 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: azureOpenaiResourceName
   location: location
- 
   sku: {
     name: 'S0'
   }
   kind: 'OpenAI'
   properties: {
-   
+    customSubDomainName: customSubDomainName
   }
-
 }
+
 // Define the OpenAI deployment
 resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
   name: azureOpenaiDeploymentName
+  parent: openai
   sku: {
     name: 'GlobalStandard'
     capacity: 20
   }
-  parent: openai
   properties: {
     model: {
       name: 'gpt-4o-mini'
@@ -157,7 +175,6 @@ resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2023
     }
     raiPolicyName: 'Microsoft.Default'
     versionUpgradeOption: 'OnceCurrentVersionExpired'
- 
   }
 }
 resource dynamicsession 'Microsoft.App/sessionPools@2024-02-02-preview' = {
@@ -185,6 +202,43 @@ resource dynamicsession 'Microsoft.App/sessionPools@2024-02-02-preview' = {
   }
 }
 
+resource userSessionPoolRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(dynamicsession.id, userPrincipalId, 'Azure Container Apps Session Executor')
+  scope: dynamicsession
+  properties: {
+    principalId: userPrincipalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0fb8eba5-a2bb-4abe-b1c1-49dfad359bb0')
+  }
+} 
+
+resource appSessionPoolRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(dynamicsession.id, identity.id, 'Azure Container Apps Session Executor')
+  scope: dynamicsession
+  properties: {
+    principalId: identity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0fb8eba5-a2bb-4abe-b1c1-49dfad359bb0')
+  }
+}
+
+resource userOpenaiRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(openai.id, userPrincipalId, 'Cognitive Services OpenAI User')
+  scope: openai
+  properties: {
+    principalId: userPrincipalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
+  }
+} 
+
+resource appOpenaiRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(openai.id, identity.id, 'Cognitive Services OpenAI User')
+  scope: openai
+  properties: {
+    principalId: identity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
+  }
+}
 
 output defaultDomain string = containerAppsEnvironment.properties.defaultDomain
 output name string = app.name
@@ -192,6 +246,5 @@ output uri string = 'https://${app.properties.configuration.ingress.fqdn}'
 output id string = app.id
 //output azureEndpoint string = '${openai.properties.endpoint}openai/deployments/gpt-4o/chat/completions?api-version=2024-02-15-preview'
 //output pool_endpoint string = 'https://${location}.dynamicsessions.io/${subscription().id}${resourceGroup().id}/sessionPools/${symbolicname.name}'
-output azure_endpoint string = '${openai.properties.endpoint}'
-output azure_apikey string = listKeys(openai.id, '2022-12-01').key1
-output pool_endpoint string = '${dynamicsession.properties.poolManagementEndpoint}'
+output azure_endpoint string = openai.properties.endpoint
+output pool_endpoint string = dynamicsession.properties.poolManagementEndpoint

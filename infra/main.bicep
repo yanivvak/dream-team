@@ -7,6 +7,23 @@ param environmentName string
 
 @minLength(1)
 @description('Primary location for all resources')
+@allowed([
+  'northcentralusstage'
+  'westus2'
+  'northeurope'
+  'eastus'
+  'eastasia'
+  'northcentralus'
+  'germanywestcentral'
+  'polandcentral'
+  'italynorth'
+  'switzerlandnorth'
+  'swedencentral'
+  'norwayeast'
+  'japaneast'
+  'australiaeast'
+  'westcentralus'
+]) // limit to regions where Dynamic sessions are available as of 2024-11-29
 param location string
 
 param srcExists bool
@@ -101,11 +118,11 @@ module src './app/src.bicep' = {
     containerRegistryName: registry.outputs.name
     exists: srcExists
     appDefinition: srcDefinition
+    userPrincipalId: principalId
+    customSubDomainName: 'dream-${resourceToken}'
   }
   scope: rg
 }
-
-
 
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = registry.outputs.loginServer
 output AZURE_KEY_VAULT_NAME string = keyVault.outputs.name
