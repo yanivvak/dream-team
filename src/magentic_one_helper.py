@@ -19,7 +19,7 @@ from autogen_magentic_one.messages import BroadcastMessage
 from autogen_magentic_one.utils import LogHandler
 from autogen_core.components.models import UserMessage
 from threading import Lock
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 import tempfile
 from promptflow.tracing import start_trace
 
@@ -31,14 +31,18 @@ from autogen_ext.models import AzureOpenAIChatCompletionClient
 from dotenv import load_dotenv
 load_dotenv()
 ## end MMA
+azure_credential = DefaultAzureCredential()
+
+token_provider = get_bearer_token_provider(
+    azure_credential, "https://cognitiveservices.azure.com/.default"
+)
 
 # Create client
 client = AzureOpenAIChatCompletionClient(
-    model="gpt-4o",
+    model="gpt-4o-mini",
     api_version="2024-02-01",
-    azure_endpoint=os.getenv("AZURE_ENDPOINT"),
-    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-    #azure_ad_token_provider=token_provider,
+    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+    azure_ad_token_provider=token_provider,
     model_capabilities={
         "vision":True,
         "function_calling":True,
@@ -46,7 +50,7 @@ client = AzureOpenAIChatCompletionClient(
     }
 )
 pool_endpoint=os.getenv("POOL_MANAGEMENT_ENDPOINT")
-azure_credential = DefaultAzureCredential()
+
 
 async def confirm_code(code: CodeBlock) -> bool:
     return True
@@ -82,7 +86,7 @@ class MagenticOneHelper:
         logger.setLevel(logging.INFO)
         self.log_handler = LogHandler(filename=os.path.join(self.logs_dir, "log.jsonl"))
         logger.handlers = [self.log_handler]
-
+        '''
         # Set up code executor
         self.code_executor = DockerCommandLineCodeExecutor(work_dir=self.logs_dir)
         await self.code_executor.__aenter__()
@@ -93,7 +97,7 @@ class MagenticOneHelper:
             self.code_executor = ACADynamicSessionsCodeExecutor(
                 pool_management_endpoint=pool_endpoint, credential=azure_credential, work_dir=temp_dir
             )
-        '''
+        
 
         # Register agents.
         await Coder.register(self.runtime, "Coder", lambda: Coder(model_client=client))
