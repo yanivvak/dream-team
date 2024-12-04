@@ -5,4 +5,8 @@ __pycache__/
 dream/
 .cache/
 logs/
-autogen/dotnet
+dream-agnext/
+data/
+
+OAI_CONFIG_LIST.json
+
