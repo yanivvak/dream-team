@@ -1,7 +1,9 @@
 import streamlit as st
 
-
+import sys
 import asyncio
+if sys.platform.startswith("win"):
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 import logging
 import os
 import json
@@ -57,7 +59,7 @@ if not st.session_state['running']:
         
 
     # Input for instructions
-    instructions = st.text_area("Enter your instructions:", value="generate code for 'Hello World' in Python", height=100)
+    instructions = st.text_area("Enter your instructions:", value="generate code and calculate with python 132*82", height=100)
 else:
     run_button_text = "Cancel Run"
 
@@ -150,6 +152,7 @@ if st.session_state['running']:
     assert st.session_state['instructions'] != "", "Instructions cannot be empty."
 
     with st.spinner("Running the workflow..."):
+        # asyncio.run(main("generate code and calculate with python 132*82"))
         # asyncio.run(main("generate code for 'Hello World' in Python"))
         asyncio.run(main(st.session_state['instructions']))
 
