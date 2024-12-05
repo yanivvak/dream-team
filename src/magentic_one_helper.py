@@ -37,19 +37,19 @@ token_provider = get_bearer_token_provider(
     azure_credential, "https://cognitiveservices.azure.com/.default"
 )
 
-# Create client
-client = AzureOpenAIChatCompletionClient(
-    model="gpt-4o",
-    api_version="2024-02-01",
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-    azure_ad_token_provider=token_provider,
-    model_capabilities={
-        "vision":True,
-        "function_calling":True,
-        "json_output":True,
-    }
-)
-pool_endpoint=os.getenv("POOL_MANAGEMENT_ENDPOINT")
+# # Create client
+# client = AzureOpenAIChatCompletionClient(
+#     model="gpt-4o",
+#     api_version="2024-02-01",
+#     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+#     azure_ad_token_provider=token_provider,
+#     model_capabilities={
+#         "vision":True,
+#         "function_calling":True,
+#         "json_output":True,
+#     }
+# )
+# pool_endpoint=os.getenv("POOL_MANAGEMENT_ENDPOINT")
 
 
 async def confirm_code(code: CodeBlock) -> bool:
@@ -57,7 +57,7 @@ async def confirm_code(code: CodeBlock) -> bool:
 
 
 class MagenticOneHelper:
-    def __init__(self, logs_dir: str = None, save_screenshots: bool = False) -> None:
+    def __init__(self, logs_dir: str = None, save_screenshots: bool = False, run_locally: bool = False) -> None:
         """
         A helper class to interact with the MagenticOne system.
         Initialize MagenticOne instance.
@@ -70,6 +70,34 @@ class MagenticOneHelper:
         self.runtime: Optional[SingleThreadedAgentRuntime] = None
         self.log_handler: Optional[LogHandler] = None
         self.save_screenshots = save_screenshots
+        self.run_locally = run_locally
+
+
+        if run_locally:
+            logging.log(logging.INFO, "Running MagenticOne locally")
+            self.client = AzureOpenAIChatCompletionClient(
+                model="gpt-4o",
+                api_version="2024-06-01",
+                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+                model_capabilities={
+                    "vision": True,
+                    "function_calling": True,
+                    "json_output": True,
+                }
+            )
+        else:
+            self.client = AzureOpenAIChatCompletionClient(
+                model="gpt-4o",
+                api_version="2024-06-01",
+                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+                azure_ad_token_provider=token_provider,
+                model_capabilities={
+                    "vision": True,
+                    "function_calling": True,
+                    "json_output": True,
+                }
+            )
 
         if not os.path.exists(self.logs_dir):
             os.makedirs(self.logs_dir)
@@ -86,21 +114,26 @@ class MagenticOneHelper:
         logger.setLevel(logging.INFO)
         self.log_handler = LogHandler(filename=os.path.join(self.logs_dir, "log.jsonl"))
         logger.handlers = [self.log_handler]
-        '''
-        # Set up code executor
-        self.code_executor = DockerCommandLineCodeExecutor(work_dir=self.logs_dir)
-        await self.code_executor.__aenter__()
-        
-        '''
-        #use this code if you want to use azure container code executor
-        with tempfile.TemporaryDirectory() as temp_dir:
-            self.code_executor = ACADynamicSessionsCodeExecutor(
-                pool_management_endpoint=pool_endpoint, credential=azure_credential, work_dir=temp_dir
-            )
-        
+
+        if self.run_locally:
+            
+            # Set up code executor
+            self.code_executor = DockerCommandLineCodeExecutor(work_dir=self.logs_dir)
+            await self.code_executor.__aenter__()
+            
+        else: 
+            # TODO: Add check for env variables
+            #use this code if you want to use azure container code executor
+            pool_endpoint=os.getenv("POOL_MANAGEMENT_ENDPOINT")
+            assert pool_endpoint, "POOL_MANAGEMENT_ENDPOINT environment variable is not set"
+            with tempfile.TemporaryDirectory() as temp_dir:
+                self.code_executor = ACADynamicSessionsCodeExecutor(
+                    pool_management_endpoint=pool_endpoint, credential=azure_credential, work_dir=temp_dir
+                )
+            
 
         # Register agents.
-        await Coder.register(self.runtime, "Coder", lambda: Coder(model_client=client))
+        await Coder.register(self.runtime, "Coder", lambda: Coder(model_client=self.client))
         coder = AgentProxy(AgentId("Coder", "default"), self.runtime)
 
         await Executor.register(
@@ -113,7 +146,7 @@ class MagenticOneHelper:
         await MultimodalWebSurfer.register(self.runtime, "WebSurfer", MultimodalWebSurfer)
         web_surfer = AgentProxy(AgentId("WebSurfer", "default"), self.runtime)
 
-        await FileSurfer.register(self.runtime, "file_surfer", lambda: FileSurfer(model_client=client))
+        await FileSurfer.register(self.runtime, "file_surfer", lambda: FileSurfer(model_client=self.client))
         file_surfer = AgentProxy(AgentId("file_surfer", "default"), self.runtime)
 
         agent_list = [web_surfer, coder, executor, file_surfer]
@@ -122,7 +155,7 @@ class MagenticOneHelper:
             "Orchestrator",
             lambda: LedgerOrchestrator(
                 agents=agent_list,
-                model_client=client,
+                model_client=self.client,
                 max_rounds=30,
                 max_time=25 * 60,
                 max_stalls_before_replan=10,
@@ -134,7 +167,7 @@ class MagenticOneHelper:
 
         actual_surfer = await self.runtime.try_get_underlying_agent_instance(web_surfer.id, type=MultimodalWebSurfer)
         await actual_surfer.init(
-            model_client=client,
+            model_client=self.client,
             downloads_folder=os.getcwd(),
             start_page="https://www.bing.com",
             browser_channel="chromium",

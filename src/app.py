@@ -26,8 +26,10 @@ if 'running' not in st.session_state:
 if "final_answer" not in st.session_state:
     st.session_state["final_answer"] = None
 
+if "run_mode_locally" not in st.session_state:
+    st.session_state["run_mode_locally"] = True
+
 st.title("MagenticOne Workflow Runner")
-st.caption("This app runs a MagenticOne workflow in Docker based on the instructions provided.")
 
 run_button_text = "Run Agents"
 if not st.session_state['running']:
@@ -60,6 +62,20 @@ if not st.session_state['running']:
 
     # Input for instructions
     instructions = st.text_area("Enter your instructions:", value="generate code and calculate with python 132*82", height=100)
+    
+    run_mode_locally = st.toggle("Run Locally", value=True)
+    if run_mode_locally:
+        st.session_state["run_mode_locally"] = True
+        st.caption("Run Locally: Run the workflow in a Docker container on your local machine.")
+    else:
+        st.caption("Run in Azure: Run the workflow in a ACA Dynamic Sessions on Azure.")
+        # check if the Azure infra is setup
+        _pool_endpoint=os.getenv("POOL_MANAGEMENT_ENDPOINT")
+        if not _pool_endpoint:
+            st.error("You need to setup the Azure infra first. Try `azd up` in your project.")
+            # st.session_state["run_mode_locally"] = True
+            # st.rerun()
+        st.session_state["run_mode_locally"] = False
 else:
     run_button_text = "Cancel Run"
 
@@ -76,6 +92,7 @@ if st.button(run_button_text, type="primary"):
         st.session_state['running'] = False
         st.session_state['instructions'] = ""
         st.session_state['final_answer'] = None
+        st.session_state["run_mode_locally"] = True
         cancel_event.set()  # Set the cancellation event
         st.rerun()
 
@@ -119,7 +136,7 @@ async def main(task, logs_dir="./logs"):
         os.makedirs(logs_dir)
 
     # Initialize MagenticOne
-    magnetic_one = MagenticOneHelper(logs_dir=logs_dir)
+    magnetic_one = MagenticOneHelper(logs_dir=logs_dir, run_locally=st.session_state["run_mode_locally"])
     await magnetic_one.initialize()
     print("MagenticOne initialized.")
 
