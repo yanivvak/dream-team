@@ -53,7 +53,7 @@ async def main() -> None:
     client = AzureOpenAIChatCompletionClient(
         model="gpt-4o",
         api_version="2024-02-01",
-        azure_endpoint=os.getenv("AZURE_ENDPOINT"),
+        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
         api_key=os.getenv("AZURE_OPENAI_API_KEY"),
         #azure_ad_token_provider=token_provider,
         model_capabilities={
