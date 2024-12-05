@@ -29,10 +29,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN apt-get clean
 
 # Clone the autogen repository and install the package
-RUN git clone --depth 1 https://github.com/microsoft/autogen.git
+RUN git clone --depth 1 --branch v0.4.0.dev8 https://github.com/microsoft/autogen.git
+WORKDIR /autogen
+
+# No need to checkout since we're already on the tag
+# RUN git checkout v0.4.0.dev8
+
 WORKDIR /app/autogen/python/packages/autogen-magentic-one
 RUN pip install -e .
-
 COPY . . 
 
 # Expose the Streamlit port
