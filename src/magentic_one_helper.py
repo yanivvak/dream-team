@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+
 from typing import Optional, AsyncGenerator, Dict, Any, List
 from datetime import datetime
 from dataclasses import asdict
@@ -73,31 +74,18 @@ class MagenticOneHelper:
         self.run_locally = run_locally
 
 
-        if run_locally:
-            logging.log(logging.INFO, "Running MagenticOne locally")
-            self.client = AzureOpenAIChatCompletionClient(
-                model="gpt-4o",
-                api_version="2024-06-01",
-                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-                model_capabilities={
-                    "vision": True,
-                    "function_calling": True,
-                    "json_output": True,
-                }
-            )
-        else:
-            self.client = AzureOpenAIChatCompletionClient(
-                model="gpt-4o",
-                api_version="2024-06-01",
-                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-                azure_ad_token_provider=token_provider,
-                model_capabilities={
-                    "vision": True,
-                    "function_calling": True,
-                    "json_output": True,
-                }
-            )
+
+        self.client = AzureOpenAIChatCompletionClient(
+            model="gpt-4o",
+            api_version="2024-06-01",
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+            azure_ad_token_provider=token_provider,
+            model_capabilities={
+                "vision": True,
+                "function_calling": True,
+                "json_output": True,
+            }
+        )
 
         if not os.path.exists(self.logs_dir):
             os.makedirs(self.logs_dir)
