@@ -15,7 +15,8 @@ This repository leverages Microsoft Autogen 0.4, Azure OpenAI and integrates it 
 # Prerequisites:
 
 1. Install [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd?tabs=winget-windows%2Cbrew-mac%2Cscript-linux&pivots=os-windows).
-2. Ensure you have access to an Azure subscription.
+2. Ensure you have access to an Azure subscription
+3. Docker - Follow the [official Docker installation instructions](https://docs.docker.com/get-started/get-docker/)
 
 # Step by Step Deployment
    
@@ -64,7 +65,7 @@ deactivate
 pip install -r requirements.txt
 ```
 ```bash
-git clone --depth 1 https://github.com/microsoft/autogen.git 
+git clone --depth 1 --branch v0.4.0.dev8 https://github.com/microsoft/autogen.git
 cd autogen/python/packages/autogen-magentic-one
 pip install -e .
 ```
@@ -82,9 +83,12 @@ playwright install --with-deps chromium
 ```bash
 cd ../../../..
 ```
-# Run
+## Run
 ```bash
 streamlit run app.py
 ```
 
-  
+# Learn
+Check these resources:
+1. [Bloogpost](https://techcommunity.microsoft.com/blog/Azure-AI-Services-blog/build-your-dream-team-with-autogen/4157961) - Build your dream team with Autogen
+2. [Webinar](https://youtu.be/wB9gD9FkgNA?si=WU3H0QL37RCiTGvl) - More agents is all you need

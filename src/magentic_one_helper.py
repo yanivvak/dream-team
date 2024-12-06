@@ -23,39 +23,21 @@ from threading import Lock
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 import tempfile
 from promptflow.tracing import start_trace
-
-#You can view the traces in http://127.0.0.1:23333/v1.0/ui/traces/
-start_trace()
-
-## MMA
 from autogen_ext.models import AzureOpenAIChatCompletionClient
 from dotenv import load_dotenv
 load_dotenv()
-## end MMA
-azure_credential = DefaultAzureCredential()
 
+azure_credential = DefaultAzureCredential()
 token_provider = get_bearer_token_provider(
     azure_credential, "https://cognitiveservices.azure.com/.default"
 )
 
-# # Create client
-# client = AzureOpenAIChatCompletionClient(
-#     model="gpt-4o",
-#     api_version="2024-02-01",
-#     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-#     azure_ad_token_provider=token_provider,
-#     model_capabilities={
-#         "vision":True,
-#         "function_calling":True,
-#         "json_output":True,
-#     }
-# )
-# pool_endpoint=os.getenv("POOL_MANAGEMENT_ENDPOINT")
+#You can view the traces in http://127.0.0.1:23333/v1.0/ui/traces/
+start_trace()
 
 
 async def confirm_code(code: CodeBlock) -> bool:
     return True
-
 
 class MagenticOneHelper:
     def __init__(self, logs_dir: str = None, save_screenshots: bool = False, run_locally: bool = False) -> None:

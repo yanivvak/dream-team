@@ -32,9 +32,6 @@ RUN apt-get clean
 RUN git clone --depth 1 --branch v0.4.0.dev8 https://github.com/microsoft/autogen.git
 WORKDIR /autogen
 
-# No need to checkout since we're already on the tag
-# RUN git checkout v0.4.0.dev8
-
 WORKDIR /app/autogen/python/packages/autogen-magentic-one
 RUN pip install -e .
 COPY . . 

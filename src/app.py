@@ -29,7 +29,12 @@ if "final_answer" not in st.session_state:
 if "run_mode_locally" not in st.session_state:
     st.session_state["run_mode_locally"] = True
 
-st.title("MagenticOne Workflow Runner")
+st.title("Dream Team powered by MagenticOne")
+
+image_path = "contoso.png"  
+  
+# Display the image in the sidebar  
+st.sidebar.image(image_path, use_container_width=True) 
 
 run_button_text = "Run Agents"
 if not st.session_state['running']:
@@ -63,7 +68,7 @@ if not st.session_state['running']:
     # Input for instructions
     instructions = st.text_area("Enter your instructions:", value="generate code and calculate with python 132*82", height=100)
     
-    run_mode_locally = st.toggle("Run Locally", value=True)
+    run_mode_locally = st.toggle("Run Locally", value=False)
     if run_mode_locally:
         st.session_state["run_mode_locally"] = True
         st.caption("Run Locally: Run the workflow in a Docker container on your local machine.")
