@@ -17,6 +17,7 @@ This repository leverages Microsoft Autogen 0.4, Azure OpenAI and integrates it 
 1. Install [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd?tabs=winget-windows%2Cbrew-mac%2Cscript-linux&pivots=os-windows).
 2. Ensure you have access to an Azure subscription
 3. Docker - Follow the [official Docker installation instructions](https://docs.docker.com/get-started/get-docker/)
+4. Python version >= 3.8, < 3.13
 
 # Step by Step Deployment
    
@@ -28,7 +29,7 @@ git clone https://github.com/yanivvak/dream-team.git
 ```bash
 azd auth login
 ```
-
+> You need to choose your prefered region (you can start with east us or sweden central or any other availablre region)
 ## 3. Deploy Azure Resources and the app
 ```bash
 azd up
@@ -80,8 +81,10 @@ playwright install --with-deps chromium
    - Alternatively, copy `.env.sample` (under src) into `.env`
 
 > Magentic-One code uses code execution, you need to have Docker installed to run the examples if you use local execution
+> Navigate to src folder
 ```bash
 cd ../../../..
+cd src
 ```
 ## Run
 ```bash
