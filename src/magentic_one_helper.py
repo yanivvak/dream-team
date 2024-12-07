@@ -35,7 +35,6 @@ token_provider = get_bearer_token_provider(
 #You can view the traces in http://127.0.0.1:23333/v1.0/ui/traces/
 start_trace()
 
-
 async def confirm_code(code: CodeBlock) -> bool:
     return True
 

@@ -1,9 +1,6 @@
 import streamlit as st
-
 import sys
 import asyncio
-if sys.platform.startswith("win"):
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 import logging
 import os
 import json
@@ -12,6 +9,9 @@ from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
 from magentic_one_helper import MagenticOneHelper
+#Enable asyncio for Windows
+if sys.platform.startswith("win"):
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 # Initialize a global cancellation event
 cancel_event = asyncio.Event()
@@ -42,7 +42,7 @@ if 'start_page' not in st.session_state:
     st.session_state.start_page = "https://www.bing.com"
 
 
-st.title("Dream Team powered by MagenticOne")
+st.title("Dream Team powered by Magentic 1")
 
 image_path = "contoso.png"  
   
@@ -53,7 +53,7 @@ with st.sidebar:
     with st.container(border=True):
         st.caption("Settings:")
         st.session_state.max_rounds = st.number_input("Max Rounds", min_value=1, value=30)
-        st.session_state.max_time = st.number_input("Max Time (min)", min_value=1, value=25)
+        st.session_state.max_time = st.number_input("Max Time (Minutes)", min_value=1, value=5)
         st.session_state.max_stalls_before_replan = st.number_input("Max Stalls Before Replan", min_value=1, max_value=10, value=5)
         st.session_state.return_final_answer = st.checkbox("Return Final Answer", value=True)
         st.session_state.start_page = st.text_input("Start Page URL", value="https://www.bing.com")
@@ -91,7 +91,7 @@ if not st.session_state['running']:
         
 
     # Input for instructions
-    instructions = st.text_area("Enter your instructions:", value="generate code and calculate with python 132*82", height=100)
+    instructions = st.text_area("Enter your instructions:", value="Generate code and calculate with python 132*82", height=100)
     
     run_mode_locally = st.toggle("Run Locally", value=False)
     if run_mode_locally:
@@ -202,9 +202,9 @@ async def main(task, logs_dir="./logs"):
         st.warning("No final answer found in logs.")
 
 if st.session_state['running']:
-    assert st.session_state['instructions'] != "", "Instructions cannot be empty."
+    assert st.session_state['instructions'] != "", "Instructions can't be empty."
 
-    with st.spinner("Running the workflow..."):
+    with st.spinner("Dream Team is running..."):
         # asyncio.run(main("generate code and calculate with python 132*82"))
         # asyncio.run(main("generate code for 'Hello World' in Python"))
         asyncio.run(main(st.session_state['instructions']))
