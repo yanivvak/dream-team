@@ -29,12 +29,37 @@ if "final_answer" not in st.session_state:
 if "run_mode_locally" not in st.session_state:
     st.session_state["run_mode_locally"] = True
 
+
+if 'max_rounds' not in st.session_state:
+    st.session_state.max_rounds = 30
+if 'max_time' not in st.session_state:
+    st.session_state.max_time = 25
+if 'max_stalls_before_replan' not in st.session_state:
+    st.session_state.max_stalls_before_replan = 5
+if 'return_final_answer' not in st.session_state:
+    st.session_state.return_final_answer = True
+if 'start_page' not in st.session_state:
+    st.session_state.start_page = "https://www.bing.com"
+
+
 st.title("Dream Team powered by MagenticOne")
 
 image_path = "contoso.png"  
   
 # Display the image in the sidebar  
-st.sidebar.image(image_path, use_container_width=True) 
+with st.sidebar:
+    st.image(image_path, use_container_width=True) 
+
+    with st.container(border=True):
+        st.caption("Settings:")
+        st.session_state.max_rounds = st.number_input("Max Rounds", min_value=1, value=30)
+        st.session_state.max_time = st.number_input("Max Time (min)", min_value=1, value=25)
+        st.session_state.max_stalls_before_replan = st.number_input("Max Stalls Before Replan", min_value=1, max_value=10, value=5)
+        st.session_state.return_final_answer = st.checkbox("Return Final Answer", value=True)
+        st.session_state.start_page = st.text_input("Start Page URL", value="https://www.bing.com")
+        
+
+        
 
 run_button_text = "Run Agents"
 if not st.session_state['running']:
@@ -142,6 +167,12 @@ async def main(task, logs_dir="./logs"):
 
     # Initialize MagenticOne
     magnetic_one = MagenticOneHelper(logs_dir=logs_dir, run_locally=st.session_state["run_mode_locally"])
+    magnetic_one.max_rounds = st.session_state.max_rounds
+    magnetic_one.max_time = st.session_state.max_time * 60
+    magnetic_one.max_stalls_before_replan = st.session_state.max_stalls_before_replan
+    magnetic_one.return_final_answer = st.session_state.return_final_answer
+    magnetic_one.start_page = st.session_state.start_page
+
     await magnetic_one.initialize()
     print("MagenticOne initialized.")
 

@@ -90,6 +90,8 @@ cd src
 ```bash
 streamlit run app.py
 ```
+If your app is ready, you can browse to (typically) http://localhost:8501 to see the app in action.
+![Screenshot](./assets/fe01.png)
 
 # Learn
 Check these resources:

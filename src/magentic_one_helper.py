@@ -69,6 +69,12 @@ class MagenticOneHelper:
             }
         )
 
+        self.max_rounds = 30
+        self.max_time = 25 * 60
+        self.max_stalls_before_replan = 5
+        self.return_final_answer = True
+        self.start_page = "https://www.bing.com"
+
         if not os.path.exists(self.logs_dir):
             os.makedirs(self.logs_dir)
 
@@ -126,10 +132,10 @@ class MagenticOneHelper:
             lambda: LedgerOrchestrator(
                 agents=agent_list,
                 model_client=self.client,
-                max_rounds=30,
-                max_time=25 * 60,
-                max_stalls_before_replan=10,
-                return_final_answer=True,
+                max_rounds=self.max_rounds,
+                max_time=self.max_time,
+                max_stalls_before_replan=self.max_stalls_before_replan,
+                return_final_answer=self.return_final_answer,
             ),
         )
 
@@ -139,7 +145,7 @@ class MagenticOneHelper:
         await actual_surfer.init(
             model_client=self.client,
             downloads_folder=os.getcwd(),
-            start_page="https://www.bing.com",
+            start_page=self.start_page,
             browser_channel="chromium",
             headless=True,
             debug_dir=self.logs_dir,
