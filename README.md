@@ -3,7 +3,7 @@
 
 # Build your dream team with Autogen
 
-This repository leverages Microsoft Autogen 0.4, Azure OpenAI and integrates it with Streamlit, to build an end to end multi agents application, this repo makes it easy to build test and deploy an advanced multi agent framwork, based on [Magentic One](https://www.microsoft.com/en-us/research/articles/magentic-one-a-generalist-multi-agent-system-for-solving-complex-tasks/)
+This repository leverages Microsoft Autogen 0.4, Azure OpenAI and integrates it with Streamlit, to build an end to end multi agents application, this repo makes it easy to build test and deploy an advanced multi agent framework, based on [Magentic One](https://www.microsoft.com/en-us/research/articles/magentic-one-a-generalist-multi-agent-system-for-solving-complex-tasks/)
  
 
 ![Architecture](assets/architecture.png)
@@ -12,6 +12,18 @@ This repository leverages Microsoft Autogen 0.4, Azure OpenAI and integrates it 
 
 :tada: November 18, 2024: we are porting this repo to  [Autogen 0.4](https://microsoft.github.io/autogen/0.4.0.dev6/index.html), A new event driven, asynchronous architecture for AutoGen and [Magentic One](https://github.com/microsoft/autogen/tree/main/python/packages/autogen-magentic-one)
 
+# Key Features
+
+Dream Team offers the following key features:
+
+- **Advanced multi agent framework**: this solution is based on the popular framework Autogen(35K stars) and Magentic One
+- **Friendly UI**: easy way to build and share data apps powered by Streamlit
+- **Single line deployment**: developer-friendly deployment that accelerates your path from a local development environment to Azure with single line of code - azd up.
+- **Secure code execution**:  Fast access to secure sandboxed with strong isolation environments that are ideal for running code or applications with Azure Container Apps dynamic sessions.
+- **Managed Identities**: Built in Azure Managed identities to eliminate the need for developers to manage these credentials
+- **Observability & Debugging**: Built-in features and tools for tracking, tracing, and debugging agent interactions and workflows, including PromptFlow tracing.
+
+
 # Prerequisites:
 
 1. Install [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd?tabs=winget-windows%2Cbrew-mac%2Cscript-linux&pivots=os-windows).
@@ -19,7 +31,7 @@ This repository leverages Microsoft Autogen 0.4, Azure OpenAI and integrates it 
 3. Docker - Follow the [official Docker installation instructions](https://docs.docker.com/get-started/get-docker/)
 4. Python version >= 3.8, < 3.13
 
-# Step by Step Deployment
+# Step by step deployment
    
 ## 1. Clone the repository     
 ```bash  
@@ -29,13 +41,13 @@ git clone https://github.com/yanivvak/dream-team.git
 ```bash
 azd auth login
 ```
-> You need to choose your prefered region (you can start with east us or sweden central or any other availablre region)
+> You need to choose your preferred region (you can start with east us or sweden central or any other available region)
 ## 3. Deploy Azure Resources and the app
 ```bash
 azd up
 ```
 
-# Working localy  
+# Working locally  
 ```bash  
 cd src 
 ```
@@ -95,5 +107,5 @@ If your app is ready, you can browse to (typically) http://localhost:8501 to see
 
 # Learn
 Check these resources:
-1. [Bloogpost](https://techcommunity.microsoft.com/blog/Azure-AI-Services-blog/build-your-dream-team-with-autogen/4157961) - Build your dream team with Autogen
+1. [Blogpost](https://techcommunity.microsoft.com/blog/Azure-AI-Services-blog/build-your-dream-team-with-autogen/4157961) - Build your dream team with Autogen
 2. [Webinar](https://youtu.be/wB9gD9FkgNA?si=WU3H0QL37RCiTGvl) - More agents is all you need
