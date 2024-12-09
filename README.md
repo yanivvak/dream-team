@@ -78,7 +78,7 @@ deactivate
 pip install -r requirements.txt
 ```
 ```bash
-git clone --depth 1 --branch v0.4.0.dev8 https://github.com/microsoft/autogen.git
+git clone --depth 1 --branch v0.4.0.dev9 https://github.com/microsoft/autogen.git
 cd autogen/python/packages/autogen-magentic-one
 pip install -e .
 ```

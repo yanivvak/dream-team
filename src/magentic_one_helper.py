@@ -5,13 +5,12 @@ import os
 from typing import Optional, AsyncGenerator, Dict, Any, List
 from datetime import datetime
 from dataclasses import asdict
-from autogen_core.application import SingleThreadedAgentRuntime
+from autogen_core import SingleThreadedAgentRuntime
 from autogen_core.application.logging import EVENT_LOGGER_NAME
-from autogen_core.base import AgentId, AgentProxy
-from autogen_core.components import DefaultTopicId
-from autogen_ext.code_executors import DockerCommandLineCodeExecutor
-from autogen_ext.code_executors import ACADynamicSessionsCodeExecutor
-from autogen_core.components.code_executor import CodeBlock
+from autogen_core import AgentId, AgentProxy, DefaultTopicId
+from autogen_ext.code_executors.docker import DockerCommandLineCodeExecutor
+from autogen_ext.code_executors.azure import ACADynamicSessionsCodeExecutor
+from autogen_core.code_executor import CodeBlock
 from autogen_magentic_one.agents.coder import Coder, Executor
 from autogen_magentic_one.agents.file_surfer import FileSurfer
 from autogen_magentic_one.agents.multimodal_web_surfer import MultimodalWebSurfer
