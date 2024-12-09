@@ -127,8 +127,8 @@ resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
             secretRef: secret.secretRef
           }))
           resources: {
-            cpu: json('1.0')
-            memory: '2.0Gi'
+            cpu: json('2.0')
+            memory: '4.0Gi'
           }
         }
       ]
@@ -143,7 +143,9 @@ resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
 param azureOpenaiResourceName string = 'dream' 
 
 // Define the name of the Azure OpenAI model name  
-param azureOpenaiDeploymentName string = 'gpt-4o' 
+param azureOpenaiDeploymentName string = 'gpt-4o'
+param azureOpenaiDeploymentNamem string = 'gpt-4o-mini'
+
 
 //Define the OpenAI resource
 resource openai 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
@@ -173,10 +175,31 @@ resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2023
       version: '2024-08-06'
       
     }
+    //raiPolicyName: 'Microsoft.Default'
+    versionUpgradeOption: 'OnceCurrentVersionExpired'
+  }
+}
+
+// Define the OpenAI deployment
+resource openaideploymentm 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
+  name: azureOpenaiDeploymentNamem
+  parent: openai
+  sku: {
+    name: 'GlobalStandard'
+    capacity: 20
+  }
+  properties: {
+    model: {
+      name: 'gpt-4o-mini'
+      format: 'OpenAI'
+      version: '2024-07-18'
+      
+    }
     raiPolicyName: 'Microsoft.Default'
     versionUpgradeOption: 'OnceCurrentVersionExpired'
   }
 }
+
 resource dynamicsession 'Microsoft.App/sessionPools@2024-02-02-preview' = {
   name: 'sessionPool'
   location: location
