@@ -148,7 +148,7 @@ param azureOpenaiDeploymentNamem string = 'gpt-4o-mini'
 
 
 //Define the OpenAI resource
-resource openai 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+resource openai 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   name: azureOpenaiResourceName
   location: location
   sku: {
@@ -161,7 +161,7 @@ resource openai 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
 }
 
 // Define the OpenAI deployment
-resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
+resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
   name: azureOpenaiDeploymentName
   parent: openai
   sku: {
@@ -175,27 +175,6 @@ resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2023
       version: '2024-08-06'
       
     }
-    //raiPolicyName: 'Microsoft.Default'
-    versionUpgradeOption: 'OnceCurrentVersionExpired'
-  }
-}
-
-// Define the OpenAI deployment
-resource openaideploymentm 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
-  name: azureOpenaiDeploymentNamem
-  parent: openai
-  sku: {
-    name: 'GlobalStandard'
-    capacity: 20
-  }
-  properties: {
-    model: {
-      name: 'gpt-4o-mini'
-      format: 'OpenAI'
-      version: '2024-07-18'
-      
-    }
-    raiPolicyName: 'Microsoft.Default'
     versionUpgradeOption: 'OnceCurrentVersionExpired'
   }
 }
