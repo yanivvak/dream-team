@@ -29,7 +29,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN apt-get clean
 
 # Clone the autogen repository and install the package
-RUN git clone --depth 1 --branch v0.4.0.dev9 https://github.com/microsoft/autogen.git
+RUN git clone --depth 1 --branch v0.4.0.dev11 https://github.com/microsoft/autogen.git
 WORKDIR /autogen
 
 WORKDIR /app/autogen/python/packages/autogen-magentic-one

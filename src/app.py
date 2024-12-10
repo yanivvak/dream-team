@@ -52,9 +52,9 @@ with st.sidebar:
 
     with st.container(border=True):
         st.caption("Settings:")
-        st.session_state.max_rounds = st.number_input("Max Rounds", min_value=1, value=30)
-        st.session_state.max_time = st.number_input("Max Time (Minutes)", min_value=1, value=5)
-        st.session_state.max_stalls_before_replan = st.number_input("Max Stalls Before Replan", min_value=1, max_value=10, value=5)
+        st.session_state.max_rounds = st.number_input("Max Rounds", min_value=1, value=40)
+        st.session_state.max_time = st.number_input("Max Time (Minutes)", min_value=1, value=10)
+        st.session_state.max_stalls_before_replan = st.number_input("Max Stalls Before Replan", min_value=1, max_value=10, value=3)
         st.session_state.return_final_answer = st.checkbox("Return Final Answer", value=True)
         st.session_state.start_page = st.text_input("Start Page URL", value="https://www.bing.com")
         
@@ -90,8 +90,27 @@ if not st.session_state['running']:
 
         
 
-    # Input for instructions
-    instructions = st.text_area("Enter your instructions:", value="Generate code and calculate with python 132*82", height=100)
+    # Define predefined values
+    predefined_values = [
+        "Generate code and calculate with python 132*82",
+        "what is the next game of Arsenal, print 2 links for purchase?",
+        "Find me 3 top asian restaurants in Dubai, print the name and the address",
+    ]
+
+    # Add an option for custom input
+    custom_option = "Custom"
+
+    # Use selectbox for predefined values and custom option
+    selected_option = st.selectbox("Select your instructions:", options=predefined_values + [custom_option])
+
+    # If custom option is selected, show text input for custom instructions
+    if selected_option == custom_option:
+        instructions = st.text_input("Enter your custom instructions:")
+    else:
+        instructions = selected_option
+
+    # Update session state with instructions
+    st.session_state['instructions'] = instructions
     
     run_mode_locally = st.toggle("Run Locally", value=False)
     if run_mode_locally:
@@ -151,7 +170,7 @@ def display_log_message(log_entry):
             agent_icon = "👤"
         else:
             agent_icon = "🤖"
-        with st.expander(f"{agent_icon} {_log_entry_json['source']} @ {_timestamp}", expanded=False):
+        with st.expander(f"{agent_icon} {_log_entry_json['source']} @ {_timestamp}", expanded=True):
             st.write(_log_entry_json["message"])
     elif _type == "LLMCallEvent":
         st.caption(f'{_timestamp} LLM Call [prompt_tokens: {_log_entry_json["prompt_tokens"]}, completion_tokens: {_log_entry_json["completion_tokens"]}]')
@@ -217,5 +236,3 @@ if st.session_state['running']:
     else:
         st.error("Task failed.")
         st.write("Final answer not found.")
-
-        

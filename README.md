@@ -78,7 +78,7 @@ deactivate
 pip install -r requirements.txt
 ```
 ```bash
-git clone --depth 1 --branch v0.4.0.dev9 https://github.com/microsoft/autogen.git
+git clone --depth 1 --branch v0.4.0.dev11 https://github.com/microsoft/autogen.git
 cd autogen/python/packages/autogen-magentic-one
 pip install -e .
 ```
@@ -89,7 +89,10 @@ playwright install --with-deps chromium
 
 ## Update configuration
 
-   - If you used AZD to deploy the resources just run `azd env get-values > .env` in the `src` directory
+   - If you used AZD to deploy the resources just run the code below
+   ```bash
+   azd env get-values > .env
+   ```` 
    - Alternatively, copy `.env.sample` (under src) into `.env`
 
 > Magentic-One code uses code execution, you need to have Docker installed to run the examples if you use local execution

@@ -17,12 +17,12 @@ from autogen_magentic_one.agents.multimodal_web_surfer import MultimodalWebSurfe
 from autogen_magentic_one.agents.orchestrator import LedgerOrchestrator
 from autogen_magentic_one.messages import BroadcastMessage
 from autogen_magentic_one.utils import LogHandler
-from autogen_core.components.models import UserMessage
+from autogen_core.models import UserMessage
 from threading import Lock
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 import tempfile
 from promptflow.tracing import start_trace
-from autogen_ext.models import AzureOpenAIChatCompletionClient
+from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -109,6 +109,10 @@ class MagenticOneHelper:
         # Register agents.
         await Coder.register(self.runtime, "Coder", lambda: Coder(model_client=self.client))
         coder = AgentProxy(AgentId("Coder", "default"), self.runtime)
+
+        #add base agent
+        #await MagenticOneBaseAgent.register(self.runtime, "MagenticOneBaseAgent", lambda: MagenticOneBaseAgent(model_client=self.client))
+        #cdbase_agent = AgentProxy(AgentId("MagenticOneBaseAgent", "default"), self.runtime)
 
         await Executor.register(
             self.runtime,

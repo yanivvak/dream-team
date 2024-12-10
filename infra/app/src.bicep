@@ -204,6 +204,25 @@ resource dynamicsession 'Microsoft.App/sessionPools@2024-02-02-preview' = {
   }
 }
 
+// Define the OpenAI deployment
+resource openaideploymentmini 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+  name: azureOpenaiDeploymentNamem
+  parent: openai
+  sku: {
+    name: 'GlobalStandard'
+    capacity: 30
+  }
+  properties: {
+    model: {
+      name: 'gpt-4o-mini'
+      format: 'OpenAI'
+      version: '2024-07-18'
+      
+    }
+    versionUpgradeOption: 'OnceCurrentVersionExpired'
+  }
+}
+
 resource userSessionPoolRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(dynamicsession.id, userPrincipalId, 'Azure Container Apps Session Executor')
   scope: dynamicsession

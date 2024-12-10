@@ -1,9 +1,9 @@
 azure-identity~=1.19.0
 python-dotenv
-autogen-agentchat==0.4.0.dev9
-autogen-ext[azure]==0.4.0.dev9
-autogen-ext[docker]==0.4.0.dev9
-autogen-core==0.4.0.dev9
+autogen-agentchat==0.4.0.dev11
+autogen-ext[azure]==0.4.0.dev11
+autogen-ext[docker]==0.4.0.dev11
+autogen-core==0.4.0.dev11
 streamlit~=1.40.2
 promptflow-devkit~=1.16.2
 promptflow-tracing~=1.16.2
