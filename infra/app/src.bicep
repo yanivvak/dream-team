@@ -63,7 +63,45 @@ module fetchLatestImage '../modules/fetch-container-image.bicep' = {
     name: name
   }
 }
+// Define the name of the Azure OpenAI resource name 
+param azureOpenaiResourceName string = 'dream' 
 
+// Define the name of the Azure OpenAI model name  
+param azureOpenaiDeploymentName string = 'gpt-4o'
+param azureOpenaiDeploymentNamem string = 'gpt-4o-mini'
+
+
+//Define the OpenAI resource
+resource openai 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
+  name: azureOpenaiResourceName
+  location: location
+  sku: {
+    name: 'S0'
+  }
+  kind: 'OpenAI'
+  properties: {
+    customSubDomainName: customSubDomainName
+  }
+}
+
+// Define the OpenAI deployment
+resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+  name: azureOpenaiDeploymentName
+  parent: openai
+  sku: {
+    name: 'GlobalStandard'
+    capacity: 20
+  }
+  properties: {
+    model: {
+      name: 'gpt-4o'
+      format: 'OpenAI'
+      version: '2024-08-06'
+      
+    }
+    versionUpgradeOption: 'OnceCurrentVersionExpired'
+  }
+}
 resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
   name: name
   location: location
@@ -139,45 +177,6 @@ resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
     }
   }
 }
-// Define the name of the Azure OpenAI resource name 
-param azureOpenaiResourceName string = 'dream' 
-
-// Define the name of the Azure OpenAI model name  
-param azureOpenaiDeploymentName string = 'gpt-4o'
-param azureOpenaiDeploymentNamem string = 'gpt-4o-mini'
-
-
-//Define the OpenAI resource
-resource openai 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
-  name: azureOpenaiResourceName
-  location: location
-  sku: {
-    name: 'S0'
-  }
-  kind: 'OpenAI'
-  properties: {
-    customSubDomainName: customSubDomainName
-  }
-}
-
-// Define the OpenAI deployment
-resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
-  name: azureOpenaiDeploymentName
-  parent: openai
-  sku: {
-    name: 'GlobalStandard'
-    capacity: 20
-  }
-  properties: {
-    model: {
-      name: 'gpt-4o'
-      format: 'OpenAI'
-      version: '2024-08-06'
-      
-    }
-    versionUpgradeOption: 'OnceCurrentVersionExpired'
-  }
-}
 
 resource dynamicsession 'Microsoft.App/sessionPools@2024-02-02-preview' = {
   name: 'sessionPool'
@@ -201,25 +200,6 @@ resource dynamicsession 'Microsoft.App/sessionPools@2024-02-02-preview' = {
       readySessionInstances: 2
     }
     
-  }
-}
-
-// Define the OpenAI deployment
-resource openaideploymentmini 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
-  name: azureOpenaiDeploymentNamem
-  parent: openai
-  sku: {
-    name: 'GlobalStandard'
-    capacity: 30
-  }
-  properties: {
-    model: {
-      name: 'gpt-4o-mini'
-      format: 'OpenAI'
-      version: '2024-07-18'
-      
-    }
-    versionUpgradeOption: 'OnceCurrentVersionExpired'
   }
 }
 
