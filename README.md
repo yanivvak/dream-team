@@ -89,18 +89,18 @@ playwright install --with-deps chromium
 
 ## Update configuration
 
+   - Navigate to src folder
+```bash
+cd ../../../..
+```
    - If you used AZD to deploy the resources just run the code below
    ```bash
    azd env get-values > .env
    ```` 
    - Alternatively, copy `.env.sample` (under src) into `.env`
 
-> Magentic-One code uses code execution, you need to have Docker installed to run the examples if you use local execution
-> Navigate to src folder
-```bash
-cd ../../../..
-cd src
-```
+> Important: Magentic-One code uses code execution, you need to have Docker installed to run the examples if you use local execution
+
 ## Run
 ```bash
 streamlit run app.py

@@ -4,11 +4,11 @@ import asyncio
 import logging
 import os
 import json
-from datetime import datetime
- 
+from datetime import datetime 
 from dotenv import load_dotenv
 load_dotenv()
 from magentic_one_helper import MagenticOneHelper
+
 #Enable asyncio for Windows
 if sys.platform.startswith("win"):
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
@@ -52,9 +52,9 @@ with st.sidebar:
 
     with st.container(border=True):
         st.caption("Settings:")
-        st.session_state.max_rounds = st.number_input("Max Rounds", min_value=1, value=40)
+        st.session_state.max_rounds = st.number_input("Max Rounds", min_value=1, value=50)
         st.session_state.max_time = st.number_input("Max Time (Minutes)", min_value=1, value=10)
-        st.session_state.max_stalls_before_replan = st.number_input("Max Stalls Before Replan", min_value=1, max_value=10, value=3)
+        st.session_state.max_stalls_before_replan = st.number_input("Max Stalls Before Replan", min_value=1, max_value=10, value=5)
         st.session_state.return_final_answer = st.checkbox("Return Final Answer", value=True)
         st.session_state.start_page = st.text_input("Start Page URL", value="https://www.bing.com")
         
@@ -92,13 +92,14 @@ if not st.session_state['running']:
 
     # Define predefined values
     predefined_values = [
-        "Generate code and calculate with python 132*82",
-        "what is the next game of Arsenal, print 2 links for purchase?",
+        "What was the perfomance of msft vs googl in the last 5 years",
+        "When is the next game of Arsenal, find me 2 links for purchase",
         "Find me 3 top asian restaurants in Dubai, print the name and the address",
+        "Generate code and calculate with python 132*82",
     ]
 
     # Add an option for custom input
-    custom_option = "Custom"
+    custom_option = "Write your own query"
 
     # Use selectbox for predefined values and custom option
     selected_option = st.selectbox("Select your instructions:", options=predefined_values + [custom_option])

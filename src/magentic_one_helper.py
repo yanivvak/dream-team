@@ -67,7 +67,7 @@ class MagenticOneHelper:
             }
         )
 
-        self.max_rounds = 30
+        self.max_rounds = 50
         self.max_time = 25 * 60
         self.max_stalls_before_replan = 5
         self.return_final_answer = True
