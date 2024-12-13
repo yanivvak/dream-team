@@ -76,7 +76,7 @@ class MagenticOneHelper:
         if not os.path.exists(self.logs_dir):
             os.makedirs(self.logs_dir)
 
-    async def initialize(self) -> None:
+    async def initialize(self, agents) -> None:
         """
         Initialize the MagenticOne system, setting up agents and runtime.
         """
@@ -104,30 +104,48 @@ class MagenticOneHelper:
                 self.code_executor = ACADynamicSessionsCodeExecutor(
                     pool_management_endpoint=pool_endpoint, credential=azure_credential, work_dir=temp_dir
                 )
+
+        agent_list = []
+        for agent in agents:
+            if (agent["type"] == "MagenticOne" and agent["name"] == "Coder"):
+                await Coder.register(self.runtime, "Coder", lambda: Coder(model_client=self.client))
+                coder = AgentProxy(AgentId("Coder", "default"), self.runtime)
+                agent_list.append(coder)
+                print("Coder added!")
+            elif (agent["type"] == "MagenticOne" and agent["name"] == "Executor"):
+                await Executor.register(
+                    self.runtime,
+                    "Executor",
+                    lambda: Executor("A agent for executing code", executor=self.code_executor, confirm_execution=confirm_code),
+                )
+                executor = AgentProxy(AgentId("Executor", "default"), self.runtime)
+                agent_list.append(executor)
+                print("Executor added!")
+            elif (agent["type"] == "MagenticOne" and agent["name"] == "WebSurfer"):
+                await MultimodalWebSurfer.register(self.runtime, "WebSurfer", MultimodalWebSurfer)
+                web_surfer = AgentProxy(AgentId("WebSurfer", "default"), self.runtime)
+                agent_list.append(web_surfer)
+                print("WebSurfer added!")
+            elif (agent["type"] == "MagenticOne" and agent["name"] == "FileSurfer"):
+                await FileSurfer.register(self.runtime, "FileSurfer", lambda: FileSurfer(model_client=self.client))
+                file_surfer = AgentProxy(AgentId("FileSurfer", "default"), self.runtime)
+                agent_list.append(file_surfer)
+                print("FileSurfer added!")
+            elif (agent["type"] == "Custom"):
+                await Coder.register(self.runtime, 
+                                    agent["name"], 
+                                    lambda: Coder(model_client=self.client,
+                                    description=agent["description"],
+                                    system_messages=agent["system_message"])
+                                    )
+                custom_agent = AgentProxy(AgentId(agent["name"], "default"), self.runtime)
+                agent_list.append(custom_agent)
+                print(f'{agent["name"]} (custom) added!')
+                pass
+            else:
+                raise("Unknown Agent!")
             
-
-        # Register agents.
-        await Coder.register(self.runtime, "Coder", lambda: Coder(model_client=self.client))
-        coder = AgentProxy(AgentId("Coder", "default"), self.runtime)
-
-        #add base agent
-        #await MagenticOneBaseAgent.register(self.runtime, "MagenticOneBaseAgent", lambda: MagenticOneBaseAgent(model_client=self.client))
-        #cdbase_agent = AgentProxy(AgentId("MagenticOneBaseAgent", "default"), self.runtime)
-
-        await Executor.register(
-            self.runtime,
-            "Executor",
-            lambda: Executor("A agent for executing code", executor=self.code_executor, confirm_execution=confirm_code),
-        )
-        executor = AgentProxy(AgentId("Executor", "default"), self.runtime)
-
-        await MultimodalWebSurfer.register(self.runtime, "WebSurfer", MultimodalWebSurfer)
-        web_surfer = AgentProxy(AgentId("WebSurfer", "default"), self.runtime)
-
-        await FileSurfer.register(self.runtime, "file_surfer", lambda: FileSurfer(model_client=self.client))
-        file_surfer = AgentProxy(AgentId("file_surfer", "default"), self.runtime)
-
-        agent_list = [web_surfer, coder, executor, file_surfer]
+        
         await LedgerOrchestrator.register(
             self.runtime,
             "Orchestrator",
@@ -143,16 +161,21 @@ class MagenticOneHelper:
 
         self.runtime.start()
 
-        actual_surfer = await self.runtime.try_get_underlying_agent_instance(web_surfer.id, type=MultimodalWebSurfer)
-        await actual_surfer.init(
-            model_client=self.client,
-            downloads_folder=os.getcwd(),
-            start_page=self.start_page,
-            browser_channel="chromium",
-            headless=True,
-            debug_dir=self.logs_dir,
-            to_save_screenshots=self.save_screenshots,
-        )
+        # check if agent WebSurfer is in the list
+        web_surfer_agent = next((x for x in agents if x["name"] == "WebSurfer"), None)
+
+        if web_surfer_agent:
+            actual_surfer = await self.runtime.try_get_underlying_agent_instance(web_surfer.id, type=MultimodalWebSurfer)
+            await actual_surfer.init(
+                model_client=self.client,
+                downloads_folder=os.getcwd(),
+                start_page=self.start_page,
+                browser_channel="chromium",
+                headless=True,
+                debug_dir=self.logs_dir,
+                to_save_screenshots=self.save_screenshots,
+            )
+                      
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         """

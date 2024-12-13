@@ -1,6 +1,8 @@
 import streamlit as st
 import sys
 import asyncio
+import random
+import string
 import logging
 import os
 import json
@@ -16,6 +18,41 @@ if sys.platform.startswith("win"):
 # Initialize a global cancellation event
 cancel_event = asyncio.Event()
 
+MAGENTIC_ONE_DEFAULT_AGENTS = [
+            {
+            "input_key":"0001",
+            "type":"MagenticOne",
+            "name":"Coder",
+            "system_message":"",
+            "description":"",
+            "icon":"👨‍💻"
+            },
+            {
+            "input_key":"0002",
+            "type":"MagenticOne",
+            "name":"Executor",
+            "system_message":"",
+            "description":"",
+            "icon":"💻"
+            },
+            {
+            "input_key":"0003",
+            "type":"MagenticOne",
+            "name":"FileSurfer",
+            "system_message":"",
+            "description":"",
+            "icon":"📂"
+            },
+            {
+            "input_key":"0004",
+            "type":"MagenticOne",
+            "name":"WebSurfer",
+            "system_message":"",
+            "description":"",
+            "icon":"🏄‍♂️"
+            },
+            ]
+
 # Initialize session state for instructions
 if 'instructions' not in st.session_state:
     st.session_state['instructions'] = ""
@@ -30,6 +67,10 @@ if "run_mode_locally" not in st.session_state:
     st.session_state["run_mode_locally"] = True
 
 
+if 'saved_agents' not in st.session_state:
+    st.session_state.saved_agents = MAGENTIC_ONE_DEFAULT_AGENTS
+
+
 if 'max_rounds' not in st.session_state:
     st.session_state.max_rounds = 30
 if 'max_time' not in st.session_state:
@@ -41,8 +82,44 @@ if 'return_final_answer' not in st.session_state:
 if 'start_page' not in st.session_state:
     st.session_state.start_page = "https://www.bing.com"
 
-
+st.set_page_config(layout="wide")
 st.title("Dream Team powered by Magentic 1")
+
+
+@st.dialog("Add agent")
+def add_agent(item = None):
+    # st.write(f"Setuup your agent:")
+    # agent_type = st.selectbox("Type", ["MagenticOne","Custom"], key=f"type{input_key}", index=0 if agent and agent["type"] == "MagenticOne" else 1, disabled=is_disabled(agent["type"]) if agent else False)
+    agent_type = "Custom"
+    agent_name = st.text_input("Name", value=None)
+    system_message = st.text_area("System Message", value=None)
+    description = st.text_area("Description", value=None)
+        
+    if st.button("Submit"):
+        # st.session_state.vote = {"item": item, "reason": reason}
+        st.session_state.saved_agents.append({
+            "input_key": random.choice(string.ascii_uppercase)+str(random.randint(0,999999)),
+            "type": agent_type,
+            "name": agent_name,
+            "system_message": system_message,
+            "description": description,
+            "icon": generate_random_agent_emoji()
+        })
+        st.rerun()
+
+
+@st.dialog("Delete agent")
+def delete_agent(input_key = None):
+    # find the agent by input_key
+    agent = next((i for i in st.session_state.saved_agents if i["input_key"] == input_key), None)
+    if agent:
+        st.write(f"Are you sure you want to remove: {agent['icon']} {agent['name']}?")
+        if st.button("Delete"):
+            st.session_state.saved_agents = [i for i in st.session_state.saved_agents if i["input_key"] != input_key]
+            st.rerun()
+        if st.button("Cancel"):
+            st.rerun()
+    
 
 image_path = "contoso.png"  
   
@@ -56,39 +133,47 @@ with st.sidebar:
         st.session_state.max_time = st.number_input("Max Time (Minutes)", min_value=1, value=10)
         st.session_state.max_stalls_before_replan = st.number_input("Max Stalls Before Replan", min_value=1, max_value=10, value=5)
         st.session_state.return_final_answer = st.checkbox("Return Final Answer", value=True)
+
         st.session_state.start_page = st.text_input("Start Page URL", value="https://www.bing.com")
         
+def generate_random_agent_emoji() -> str:
+    emoji_list = ["🤖", "🔄", "😊", "🚀", "🌟", "🔥", "💡", "🎉", "👍", "💻"]
+    return random.choice(emoji_list)
 
-        
 
 run_button_text = "Run Agents"
 if not st.session_state['running']:
-      
-    st.write("Our AI agents are ready to assist you. Our line up:")
-    c1, c2, c3, c4, c5 = st.columns([1, 1, 1, 1, 1])
 
-    with c1:
-        with st.container(border=True):
-            st.write("🎻") 
-            st.caption("Orchestrator")
-    with c2:
-        with st.container(border=True):
-            st.write("🏄‍♂️")
-            st.caption("WebSurfer")
-    with c3:
-        with st.container(border=True):
-            st.write("👨‍💻")
-            st.caption("Coder")
-    with c4:
-        with st.container(border=True):
-            st.write("📂")
-            st.caption("FileSurfer")
-    with c5:
-        with st.container(border=True):
-            st.write("💻")
-            st.caption("Executor")
 
-        
+    with st.expander("Agents configuration", expanded=True):
+        # st.write("Custom AI agents are ready to assist you. Your line up:")
+        agents = st.session_state.saved_agents
+        # st.write(agents)
+        # create st.columns for each agent
+        cols = st.columns(len(agents))
+        for col, agent in zip(cols, agents):
+
+            with col:
+                with st.container(border=True):
+                    st.write(agent["icon"]) 
+                    st.write(agent["name"])
+                    st.caption(agent["type"])
+                    # st.caption(agent["description"])
+                    if st.button("❌", key=f'delete{agent["input_key"]}'):
+                        delete_agent(agent["input_key"])
+                    # if st.button("✏️", key=f'edit{agent["input_key"]}'):
+                    #     pass
+
+        # with cols[-1]:
+        col1, col2, col3 = st.columns([3,1,1])
+        with col1:
+            if st.button("Restore defaults", icon="🔄"):
+                st.session_state.saved_agents = MAGENTIC_ONE_DEFAULT_AGENTS
+                st.rerun()
+        with col3:
+            if st.button("Add Agent", type="primary", icon="➕"):
+                add_agent("A")
+                
 
     # Define predefined values
     predefined_values = [
@@ -178,6 +263,9 @@ def display_log_message(log_entry):
     else:
         st.caption("🤔 Agents mumbling...")
 
+async def init(logs_dir="./logs"):
+    pass
+    # magnetic_one = init()
 
 async def main(task, logs_dir="./logs"):
     
@@ -193,8 +281,9 @@ async def main(task, logs_dir="./logs"):
     magnetic_one.return_final_answer = st.session_state.return_final_answer
     magnetic_one.start_page = st.session_state.start_page
 
-    await magnetic_one.initialize()
+    await magnetic_one.initialize(st.session_state.saved_agents)
     print("MagenticOne initialized.")
+    # return magnetic_one
 
     # Create task and log streaming tasks
     task_future = asyncio.create_task(magnetic_one.run_task(task))
