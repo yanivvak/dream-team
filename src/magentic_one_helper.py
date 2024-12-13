@@ -17,7 +17,7 @@ from autogen_magentic_one.agents.multimodal_web_surfer import MultimodalWebSurfe
 from autogen_magentic_one.agents.orchestrator import LedgerOrchestrator
 from autogen_magentic_one.messages import BroadcastMessage
 from autogen_magentic_one.utils import LogHandler
-from autogen_core.models import UserMessage
+from autogen_core.models import UserMessage, SystemMessage
 from threading import Lock
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 import tempfile
@@ -132,11 +132,16 @@ class MagenticOneHelper:
                 agent_list.append(file_surfer)
                 print("FileSurfer added!")
             elif (agent["type"] == "Custom"):
+                _sys_messages = [
+                    SystemMessage(
+                        content=agent["system_message"],
+                    )
+                ]
                 await Coder.register(self.runtime, 
                                     agent["name"], 
                                     lambda: Coder(model_client=self.client,
                                     description=agent["description"],
-                                    system_messages=agent["system_message"])
+                                    system_messages=_sys_messages)
                                     )
                 custom_agent = AgentProxy(AgentId(agent["name"], "default"), self.runtime)
                 agent_list.append(custom_agent)
