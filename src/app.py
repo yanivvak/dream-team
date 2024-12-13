@@ -83,12 +83,13 @@ if 'start_page' not in st.session_state:
     st.session_state.start_page = "https://www.bing.com"
 
 st.set_page_config(layout="wide")
-st.title("Dream Team powered by Magentic 1")
+st.write("### Dream Team powered by Magentic 1")
 
 
 @st.dialog("Add agent")
 def add_agent(item = None):
     # st.write(f"Setuup your agent:")
+    st.caption("Note: Allways use umique name with no spaces. Allways fill System message and Description.")
     # agent_type = st.selectbox("Type", ["MagenticOne","Custom"], key=f"type{input_key}", index=0 if agent and agent["type"] == "MagenticOne" else 1, disabled=is_disabled(agent["type"]) if agent else False)
     agent_type = "Custom"
     agent_name = st.text_input("Name", value=None)
@@ -114,11 +115,14 @@ def delete_agent(input_key = None):
     agent = next((i for i in st.session_state.saved_agents if i["input_key"] == input_key), None)
     if agent:
         st.write(f"Are you sure you want to remove: {agent['icon']} {agent['name']}?")
-        if st.button("Delete"):
-            st.session_state.saved_agents = [i for i in st.session_state.saved_agents if i["input_key"] != input_key]
-            st.rerun()
-        if st.button("Cancel"):
-            st.rerun()
+        col1, col2 = st.columns([1,1])
+        with col1:
+            if st.button("Cancel"):
+                st.rerun()
+        with col2:
+            if st.button("Delete", type="primary"):
+                st.session_state.saved_agents = [i for i in st.session_state.saved_agents if i["input_key"] != input_key]
+                st.rerun()
     
 
 image_path = "contoso.png"  
@@ -137,7 +141,7 @@ with st.sidebar:
         st.session_state.start_page = st.text_input("Start Page URL", value="https://www.bing.com")
         
 def generate_random_agent_emoji() -> str:
-    emoji_list = ["🤖", "🔄", "😊", "🚀", "🌟", "🔥", "💡", "🎉", "👍", "💻"]
+    emoji_list = ["🤖", "🔄", "😊", "🚀", "🌟", "🔥", "💡", "🎉", "👍"]
     return random.choice(emoji_list)
 
 
@@ -146,7 +150,7 @@ if not st.session_state['running']:
 
 
     with st.expander("Agents configuration", expanded=True):
-        # st.write("Custom AI agents are ready to assist you. Your line up:")
+        st.caption("You can configure your agents here.")
         agents = st.session_state.saved_agents
         # st.write(agents)
         # create st.columns for each agent
@@ -167,7 +171,7 @@ if not st.session_state['running']:
         # with cols[-1]:
         col1, col2, col3 = st.columns([3,1,1])
         with col1:
-            if st.button("Restore defaults", icon="🔄"):
+            if st.button("Restore MagenticOne agents", icon="🔄"):
                 st.session_state.saved_agents = MAGENTIC_ONE_DEFAULT_AGENTS
                 st.rerun()
         with col3:
@@ -191,7 +195,7 @@ if not st.session_state['running']:
 
     # If custom option is selected, show text input for custom instructions
     if selected_option == custom_option:
-        instructions = st.text_input("Enter your custom instructions:")
+        instructions = st.text_area("Enter your custom instructions:", height=200)
     else:
         instructions = selected_option
 
@@ -257,7 +261,11 @@ def display_log_message(log_entry):
         else:
             agent_icon = "🤖"
         with st.expander(f"{agent_icon} {_log_entry_json['source']} @ {_timestamp}", expanded=True):
-            st.write(_log_entry_json["message"])
+            if (_log_entry_json["message"]).strip().startswith("Updated Ledger"):
+                st.write("Updated Ledger:")
+                st.json((_log_entry_json["message"]).replace("Updated Ledger:", ""))
+            else:
+                st.write(_log_entry_json["message"])
     elif _type == "LLMCallEvent":
         st.caption(f'{_timestamp} LLM Call [prompt_tokens: {_log_entry_json["prompt_tokens"]}, completion_tokens: {_log_entry_json["completion_tokens"]}]')
     else:
