@@ -92,10 +92,9 @@ if not st.session_state['running']:
 
     # Define predefined values
     predefined_values = [
-        "What was the perfomance of msft vs googl in the last 5 years",
-        "When is the next game of Arsenal, find me 2 links for purchase",
-        "Find me 3 top asian restaurants in Dubai, print the name and the address",
-        "Generate code and calculate with python 132*82",
+        "Find me a French restaurant in Dubai with 2 Michelin stars?",
+        "When and where is the next game of Arsenal, print a link for purchase",
+        "Generate a python script to print Fibonacci series below 1000",
     ]
 
     # Add an option for custom input
