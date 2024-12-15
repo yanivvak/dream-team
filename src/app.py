@@ -107,6 +107,36 @@ def add_agent(item = None):
             "icon": generate_random_agent_emoji()
         })
         st.rerun()
+@st.dialog("Edit agent")
+def edit_agent(input_key = None):
+    agent = next((i for i in st.session_state.saved_agents if i["input_key"] == input_key), None)
+    # st.write(f"Setuup your agent:")
+    st.caption("Note: Allways use umique name with no spaces. Allways fill System message and Description.")
+    # agent_type = st.selectbox("Type", ["MagenticOne","Custom"], key=f"type{input_key}", index=0 if agent and agent["type"] == "MagenticOne" else 1, disabled=is_disabled(agent["type"]) if agent else False)
+    # agent_type = "Custom"
+    # agent_name = st.text_input("Name", value=None)
+    # system_message = st.text_area("System Message", value=None)
+    # description = st.text_area("Description", value=None)
+    if agent["type"] == "MagenticOne":
+        disabled = True
+        st.info("MagenticOne agents cannot be edited. Only deleted.")
+    else:
+        disabled = False
+    agent_type = "Custom"
+    agent_name = st.text_input("Name", key=f"name{input_key}", value=agent["name"] if agent else None, disabled=disabled)
+    system_message = st.text_area("System Message", key=f"sys{input_key}", value=agent["system_message"] if agent else None, disabled=disabled)
+    description = st.text_area("Description", key=f"desc{input_key}", value=agent["description"] if agent else None, disabled=disabled)
+
+        
+    if st.button("Submit", disabled=disabled):
+        agent["name"] = agent_name
+        agent["system_message"] = system_message
+        agent["description"] = description
+        st.rerun()
+    
+    if st.button("Delete", key=f'delete{agent["input_key"]}', type="primary"):
+        st.session_state.saved_agents = [i for i in st.session_state.saved_agents if i["input_key"] != input_key]
+        st.rerun()
 
 
 @st.dialog("Delete agent")
@@ -163,10 +193,10 @@ if not st.session_state['running']:
                     st.write(agent["name"])
                     st.caption(agent["type"])
                     # st.caption(agent["description"])
-                    if st.button("❌", key=f'delete{agent["input_key"]}'):
-                        delete_agent(agent["input_key"])
-                    # if st.button("✏️", key=f'edit{agent["input_key"]}'):
-                    #     pass
+                    # if st.button("❌", key=f'delete{agent["input_key"]}'):
+                    #     delete_agent(agent["input_key"])
+                    if st.button("✏️", key=f'edit{agent["input_key"]}'):
+                        edit_agent(agent["input_key"])
 
         # with cols[-1]:
         col1, col2, col3 = st.columns([3,1,1])
