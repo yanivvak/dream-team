@@ -148,7 +148,7 @@ class MagenticOneHelper:
                 print(f'{agent["name"]} (custom) added!')
                 pass
             else:
-                raise("Unknown Agent!")
+                raise ValueError('Unknown Agent!')
             
         
         await LedgerOrchestrator.register(
