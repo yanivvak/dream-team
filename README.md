@@ -35,7 +35,7 @@ Dream Team offers the following key features:
    
 ## 1. Clone the repository     
 ```bash  
-git clone https://github.com/yanivvak/dream-team.git  
+git clone https://github.com/Azure-Samples/dream-team  
 ```
 ## 2. Login to your Azure account
 ```bash
