@@ -89,7 +89,7 @@ st.write("### Dream Team powered by Magentic 1")
 @st.dialog("Add agent")
 def add_agent(item = None):
     # st.write(f"Setuup your agent:")
-    st.caption("Note: Allways use umique name with no spaces. Allways fill System message and Description.")
+    st.caption("Note: Always use unique name with no spaces. Always fill System message and Description.")
     # agent_type = st.selectbox("Type", ["MagenticOne","Custom"], key=f"type{input_key}", index=0 if agent and agent["type"] == "MagenticOne" else 1, disabled=is_disabled(agent["type"]) if agent else False)
     agent_type = "Custom"
     agent_name = st.text_input("Name", value=None)
