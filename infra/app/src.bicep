@@ -171,7 +171,7 @@ resource openaideployment 'Microsoft.CognitiveServices/accounts/deployments@2024
     model: {
       name: 'gpt-4o'
       format: 'OpenAI'
-      version: '2024-08-06'
+      version: '2024-11-20'
       
     }
     versionUpgradeOption: 'OnceCurrentVersionExpired'

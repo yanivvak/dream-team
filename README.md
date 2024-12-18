@@ -30,6 +30,8 @@ Dream Team offers the following key features:
 2. Ensure you have access to an Azure subscription
 3. Docker - Follow the [official Docker installation instructions](https://docs.docker.com/get-started/get-docker/)
 4. Python version >= 3.8, < 3.13
+5. Install [UV](https://github.com/astral-sh/uv?tab=readme-ov-file#installation) - optional for running locally
+
 
 # Step by step deployment
    
@@ -51,20 +53,19 @@ azd up
 ```bash  
 cd src 
 ```
-Install [UV](https://github.com/astral-sh/uv?tab=readme-ov-file#installation)
 Set up a virtual environment (Preferred)
 ```bash
-uv venv
+uv venv dream
 ```
 Once you’ve created a virtual environment, you may activate it.
 
 On Windows, run:
 ```bash
-.venv\Scripts\activate
+dream\Scripts\activate
 ```
 On Unix or MacOS, run:
 ```bash
-source .venv/bin/activate
+source dream/bin/activate
 ```
 To deactivate :
 ```bash
@@ -72,15 +73,18 @@ deactivate
 ```
 > More information about virtual environments can be found [here](https://docs.python.org/3/tutorial/venv.html)
 
- 
 ## Install dependencies
 ```bash
-uv pip sync requirements.txt
+uv pip install -r requirements.txt
 ```
 ```bash
 git clone --depth 1 --branch v0.4.0.dev11 https://github.com/microsoft/autogen.git
 cd autogen/python/packages/autogen-magentic-one
-pip install -e .
+uv pip install -e .
+```
+   - Navigate to src folder
+```bash
+cd ../../../..
 ```
 
 ```bash
@@ -89,10 +93,6 @@ playwright install --with-deps chromium
 
 ## Update configuration
 
-   - Navigate to src folder
-```bash
-cd ../../../..
-```
    - If you used AZD to deploy the resources just run the code below
    ```bash
    azd env get-values > .env
