@@ -81,6 +81,8 @@ if 'return_final_answer' not in st.session_state:
     st.session_state.return_final_answer = True
 if 'start_page' not in st.session_state:
     st.session_state.start_page = "https://www.bing.com"
+if 'save_screenshots' not in st.session_state:
+    st.session_state.save_screenshots = True
 
 st.set_page_config(layout="wide")
 st.write("### Dream Team powered by Magentic 1")
@@ -169,6 +171,7 @@ with st.sidebar:
         st.session_state.return_final_answer = st.checkbox("Return Final Answer", value=True)
 
         st.session_state.start_page = st.text_input("Start Page URL", value="https://www.bing.com")
+        st.session_state.save_screenshots = st.checkbox("Save Screenshots", value=True)
         
 def generate_random_agent_emoji() -> str:
     emoji_list = ["🤖", "🔄", "😊", "🚀", "🌟", "🔥", "💡", "🎉", "👍"]
@@ -264,7 +267,7 @@ if st.button(run_button_text, type="primary"):
         cancel_event.set()  # Set the cancellation event
         st.rerun()
 
-def display_log_message(log_entry):     
+def display_log_message(log_entry, logs_dir):     
     # _log_entry_json  = json.loads(log_entry)
     _log_entry_json  = log_entry
 
@@ -293,6 +296,8 @@ def display_log_message(log_entry):
             if (_log_entry_json["message"]).strip().startswith("Updated Ledger"):
                 st.write("Updated Ledger:")
                 st.json((_log_entry_json["message"]).replace("Updated Ledger:", ""))
+            if _log_entry_json["message"].startswith("Screenshot:"):
+                st.image(f'./{logs_dir}/{_log_entry_json["message"].replace("Screenshot:", "").strip()}')
             else:
                 st.write(_log_entry_json["message"])
     elif _type == "LLMCallEvent":
@@ -317,6 +322,7 @@ async def main(task, logs_dir="./logs"):
     magnetic_one.max_stalls_before_replan = st.session_state.max_stalls_before_replan
     magnetic_one.return_final_answer = st.session_state.return_final_answer
     magnetic_one.start_page = st.session_state.start_page
+    magnetic_one.save_screenshots = st.session_state.save_screenshots
 
     await magnetic_one.initialize(st.session_state.saved_agents)
     print("MagenticOne initialized.")
@@ -331,7 +337,7 @@ async def main(task, logs_dir="./logs"):
         async for log_entry in magnetic_one.stream_logs():
             # print(json.dumps(log_entry, indent=2))
             # st.write(json.dumps(log_entry, indent=2))
-            display_log_message(log_entry=log_entry)
+            display_log_message(log_entry=log_entry, logs_dir=logs_dir)
 
     # Wait for task to complete
     await task_future
