@@ -18,13 +18,14 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir --upgrade pip
+ADD https://astral.sh/uv/install.sh /install.sh
+RUN chmod -R 655 /install.sh && /install.sh && rm /install.sh
+COPY ./requirements.txt .
+    
+RUN /root/.local/bin/uv pip install --system --no-cache -r requirements.txt
 
 RUN pip install --no-cache-dir playwright
 RUN playwright install --with-deps chromium
-
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
 
 RUN apt-get clean
 
