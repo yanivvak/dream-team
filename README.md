@@ -75,7 +75,7 @@ deactivate
 
 ## Install dependencies
 ```bash
-uv pip install -r requirements.txt
+uv sync
 ```
 ```bash
 git clone --depth 1 --branch v0.4.0.dev11 https://github.com/microsoft/autogen.git
