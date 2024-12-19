@@ -22,7 +22,7 @@ ADD https://astral.sh/uv/install.sh /install.sh
 RUN chmod -R 655 /install.sh && /install.sh && rm /install.sh
 COPY ./requirements.txt .
     
-RUN /root/.local/bin/uv sync --system --no-cache
+RUN /root/.local/bin/uv pip install --system --no-cache -r requirements.txt
 
 RUN pip install --no-cache-dir playwright
 RUN playwright install --with-deps chromium
@@ -34,7 +34,7 @@ RUN git clone --depth 1 --branch v0.4.0.dev11 https://github.com/microsoft/autog
 WORKDIR /autogen
 
 WORKDIR /app/autogen/python/packages/autogen-magentic-one
-RUN uv pip install -e .
+RUN pip install -e .
 COPY . . 
 
 # Expose the Streamlit port
