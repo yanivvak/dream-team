@@ -55,17 +55,17 @@ cd src
 ```
 Set up a virtual environment (Preferred)
 ```bash
-uv venv dream
+uv venv
 ```
 Once you’ve created a virtual environment, you may activate it.
 
 On Windows, run:
 ```bash
-dream\Scripts\activate
+.venv\Scripts\activate
 ```
 On Unix or MacOS, run:
 ```bash
-source dream/bin/activate
+source .venv/bin/activate
 ```
 To deactivate :
 ```bash

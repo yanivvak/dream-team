@@ -3,15 +3,15 @@ name = "src"
 version = "0.1.0"
 description = "backend for dream team project"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10, <3.13"
 dependencies = [
-"azure-identity~=1.19.0",
-"python-dotenv",
-"autogen-agentchat==0.4.0.dev11",
-"autogen-ext[azure]==0.4.0.dev11",
-"autogen-ext[docker]==0.4.0.dev11",
-"autogen-core==0.4.0.dev11",
-"streamlit~=1.40.2",
-"promptflow-devkit~=1.16.2",
-"promptflow-tracing~=1.16.2"
+    "azure-identity>=1.19.0",
+    "python-dotenv>=1.0.1",
+    "autogen-agentchat==0.4.0.dev11",
+    "autogen-ext[azure]==0.4.0.dev11",
+    "autogen-ext[docker]==0.4.0.dev11",
+    "autogen-core==0.4.0.dev11",
+    "streamlit>=1.41.1",
+    "promptflow-devkit==1.16.2",
+    "promptflow-tracing==1.16.2",
 ]
